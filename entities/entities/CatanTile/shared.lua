@@ -27,21 +27,32 @@ end
 function ENT:GetBoard()
 	return self.dt.Board
 end
-
-function ENT:AddCorner( pos, corner )
-	self.Corners[pos] = corner
-end
-
-function ENT:AddEdge( pos, edge )
-	self.Edges[pos] = edge
-end
-
 function ENT:GetEdges()
-	return self.Edges
+
+	local edges = {}
+	edges[ "UP" ] = self:GetUPEdge()
+	edges[ "DN" ] = self:GetDNEdge()
+	edges[ "LL" ] = self:GetLLEdge()
+	edges[ "UL" ] = self:GetULEdge()
+	edges[ "LR" ] = self:GetLREdge()
+	edges[ "UR" ] = self:GetUREdge()
+	
+	return edges
+	
 end
 
-function ENT:GetCorners()
-	return self.Corners
+function ENT:GetVertexs()
+	
+	local vertexs = {}
+	vertexs[ "UL" ] = self:GetULVertex()
+	vertexs[ "UR" ] = self:GetURVertex()
+	vertexs[ "RT" ] = self:GetRTVertex()
+	vertexs[ "LT" ] = self:GetLTVertex()
+	vertexs[ "LL" ] = self:GetLLVertex()
+	vertexs[ "LR" ] = self:GetLRVertex()
+	
+	return vertexs
+	
 end
 
 function ENT:SetDiceValue( value )
@@ -58,66 +69,62 @@ end
 
 function ENT:GetAdjacentTiles()
 	
-	if( self.adjacentTiles ) then
-		
-		return self.adjacentTiles
-		
-	end
+	local adjacentTiles = {}
+	adjacentTiles[ "UP" ] = self:GetUP()
+	adjacentTiles[ "DN" ] = self:GetDN()
+	adjacentTiles[ "LL" ] = self:GetLL()
+	adjacentTiles[ "UL" ] = self:GetUL()
+	adjacentTiles[ "LR" ] = self:GetLR()
+	adjacentTiles[ "UR" ] = self:GetUR()
 	
-	self.adjacentTiles = {}
-	self.adjacentTiles[ "UP" ] = self:GetUP()
-	self.adjacentTiles[ "DN" ] = self:GetDN()
-	self.adjacentTiles[ "LL" ] = self:GetLL()
-	self.adjacentTiles[ "UL" ] = self:GetUL()
-	self.adjacentTiles[ "LR" ] = self:GetLR()
-	self.adjacentTiles[ "UR" ] = self:GetUR()
+	return adjacentTiles
 	
-	return self.adjacentTiles
-	
+end
+
+function ENT:GetULVertex()
+	return self:GetBoard():GetVertexAt( self:GetX() - 1, self:GetY() * 2 )
+end
+
+function ENT:GetURVertex()
+	return self:GetBoard():GetVertexAt( self:GetX(), self:GetY() * 2 + 1 )
+end
+
+function ENT:GetRTVertex()
+	return self:GetBoard():GetVertexAt( self:GetX() + 1, self:GetY() * 2 )
+end
+
+function ENT:GetLTVertex()
+	return self:GetBoard():GetVertexAt( self:GetX() - 1, self:GetY() * 2 - 1 )
+end
+
+function ENT:GetLLVertex()
+	return self:GetBoard():GetVertexAt( self:GetX() - 1, self:GetY() * 2 - 2 )
+end
+
+function ENT:GetLRVertex()
+	return self:GetBoard():GetVertexAt( self:GetX(), self:GetY() * 2 - 1 )
 end
 
 function ENT:GetDN()
-	
-	--return Tile( self.x, self.y + 1 )
 	return self:GetBoard():GetTileAt( self:GetX(), self:GetY() - 1 )
-	
 end
 
 function ENT:GetUP()
-	
-	--return Tile( self.x, self.y - 1 )
 	return self:GetBoard():GetTileAt( self:GetX(), self:GetY() + 1 )
-	
 end
 
 function ENT:GetLL()
-	
-	--local col = self.x % 2
-	--return Tile( self.x-1, self.y+col )
 	return self:GetBoard():GetTileAt( self:GetX() - 1, self:GetY() - 1 )
-	
 end
 
 function ENT:GetUL()
-	
-	--local col = (self.x + 1) % 2
-	--return Tile( self.x-1, self.y-col )
 	return self:GetBoard():GetTileAt( self:GetX() - 1, self:GetY() )
-	
 end
 
 function ENT:GetLR()
-	
-	--local col = self.x % 2
-	--return Tile( self.x+1, self.y+col )
 	return self:GetBoard():GetTileAt( self:GetX() + 1, self:GetY() )
-	
 end
 
 function ENT:GetUR()
-	
-	--local col = (self.x + 1) % 2
-	--return Tile( self.x+1, self.y-col )
 	return self:GetBoard():GetTileAt( self:GetX() + 1, self:GetY() + 1 )
-	
 end

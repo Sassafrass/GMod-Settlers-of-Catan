@@ -1,3 +1,3 @@
 
 ENT.Type = "anim"
-ENT.Base = "CatanPieceSocket"
+ENT.Base = "catantilesocket"

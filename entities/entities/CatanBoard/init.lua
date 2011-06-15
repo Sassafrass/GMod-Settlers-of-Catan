@@ -108,7 +108,6 @@ function ENT:CreateTiles()
 		
 		for i = 1, count do
 			
-			ErrorNoHalt( "Creating ", TerrainName( terrainType ), "\n" )
 			tile_count = tile_count + 1
 			tiles[ tile_count ] = self:CreateTile( terrainType )
 			
@@ -129,7 +128,8 @@ function ENT:CreateTiles()
 		tile:SetPos( self:TileToWorld( x, y ) )
 		tile:SetX( x )
 		tile:SetY( y )
-		-- tile:SetParent( self )
+		tile:CreateVertexs()
+		tile:CreateEdges()
 		self.Tiles[ x ][ y ] = tile
 		tile_count = tile_count - 1
 		

@@ -5,8 +5,8 @@ usermessage.Hook( "SkyCamPos", function( um )
 end )
 
 GM.skycampos = Vector( 4808, 247.9688, 0 )
-GM.ViewOrigin = Vector( 0, 0, 0 )
-GM.ViewDistance = 400
+GM.ViewOrigin = Vector( 0, 0, 3.45 )
+GM.ViewDistance = 250
 GM.MinViewDistance = 200
 GM.MaxViewDistance = 600
 GM.ViewAngle = Angle( 64, 90, 0 )

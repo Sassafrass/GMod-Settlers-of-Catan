@@ -260,7 +260,7 @@ function ENT:RemovePlayer( CPl )
 	
 	if( self.UsedColors[ CPl:ColorID() ] == CPl ) then
 		
-		self.UserColors[ CPl:ColorID() ] = nil
+		self.UsedColors[ CPl:ColorID() ] = nil
 		
 	end
 	
