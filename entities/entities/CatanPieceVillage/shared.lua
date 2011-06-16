@@ -1,6 +1,6 @@
 
 ENT.Type = "anim"
-ENT.Base = "CatanPiece"
+ENT.Base = "catanpiece"
 
 function ENT:SetupDataTables()
 	self.BaseClass.SetupDataTables(self)

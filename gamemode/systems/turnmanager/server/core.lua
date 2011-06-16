@@ -94,7 +94,7 @@ function GM.TurnManager:StartTurn()
 end
 
 function GM.TurnManager:NextPhase(TurnTotal, TurnPhase)
-	if(TurnTotal and TurnPhase and (self.TurnTotal != TurnTotal or self.TurnPhase != TurnPhase)) -- Timer stuff
+	if(TurnTotal and TurnPhase and (self.TurnTotal != TurnTotal or self.TurnPhase != TurnPhase)) then -- Timer stuff
 		return
 	end
 	if(self.TurnPhase == TurnState.Build) then

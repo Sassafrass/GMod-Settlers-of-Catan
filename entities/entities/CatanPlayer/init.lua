@@ -115,6 +115,39 @@ function ENT:RollDie()
 	
 end
 
+function ENT:PlacePiece( PType, PosX, PosY, piece )
+	
+	if( PType == PieceType.Robber ) then
+		
+		local tile = self:GetGame():GetBoard():GetTileAt( PosX, PosY )
+		
+		piece:SetPos( tile:GetPos() )
+		
+	else
+		
+		piece = self:GetGame():CreatePiece( self, PType )
+		if( PType == PieceType.Village ) then
+			
+			local vert = self:GetGame():GetBoard():GetVertexAt( PosX, PosY )
+			vert:SetPiece( piece )
+			piece:SetPos( vert:GetPos() )
+			piece:SetAngles( vert:GetAngles() )
+			
+		elseif( PType == PieceType.Road ) then
+			
+			local edge = self:GetGame():GetBoard():GetEdgeAt( PosX, PosY )
+			edge:SetPiece( piece )
+			piece:SetPos( edge:GetPos() )
+			piece:SetAngles( edge:GetAngles() )
+			
+		end
+		
+	end
+	
+	self:GetGame():OnPiecePlaced( self, PType, piece )
+	
+end
+
 function ENT:SetEyeTarget( targetPos )
 	
 	self.dt.EyeTarget = targetPos
