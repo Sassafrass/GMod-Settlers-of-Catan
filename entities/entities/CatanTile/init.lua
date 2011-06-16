@@ -18,6 +18,10 @@ function ENT:UpdateTransmitState()
 	
 end
 
+function ENT:SetTokenValue( value )
+	self.dt.TokenValue = value
+end
+
 function ENT:SetX( x )
 	self.dt.X = x
 end

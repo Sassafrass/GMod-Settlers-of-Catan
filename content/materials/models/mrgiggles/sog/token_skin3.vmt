@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\mrgiggles\sog\token_skin3"
+	"$model" 1
+	"$envmapmode" 1
+}

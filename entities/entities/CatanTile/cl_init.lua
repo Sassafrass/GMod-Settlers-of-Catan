@@ -11,6 +11,20 @@ function ENT:Initialize()
 	
 	self:GetBoard().Tiles[ self:GetX() ][ self:GetY() ] = self
 	
+	local t = self:GetTokenValue()
+	if( t > 0 ) then
+		self.Chit = ClientsideModel( "models/mrgiggles/sog/token.mdl" )
+		if( t < 8 ) then
+			self.Chit:SetSkin( t - 2 )
+		else
+			self.Chit:SetSkin( t - 3 )
+		end
+		self.Chit:SetPos( self:GetPos() + Vector( 0, 0, self:OBBMaxs().z ) )
+		self.Chit:SetAngles( self:GetAngles() )
+		self.ChitScale = 0.75
+		self.Chit:SetModelScale( Vector() * self.ChitScale )
+	end
+	
 end
 
 
@@ -21,7 +35,6 @@ function ENT:Draw()
 	
 end
 
--- local Vector_Up = Vector( 0, 0, 15 )
 -- hook.Add( "HUDPaint", "CatanTile.HUDPaint", function()
 	
 	-- local CPl = LocalCPlayer()
@@ -43,6 +56,7 @@ end
 	
 -- end )
 
+-- local Vector_Up = Vector( 0, 0, 15 )
 -- hook.Add( "PostDrawOpaqueRenderables", "CatanTile.PostDrawOpaqueRenderables", function()
 	
 	-- local CPl = LocalCPlayer()

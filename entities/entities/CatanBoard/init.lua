@@ -50,6 +50,17 @@ function ENT:SetGame( CGame )
 	
 end
 
+local chits_4_players = {
+	2, 2,
+	3, 3,
+	4, 4,
+	5, 5,
+	6, 6,
+	8, 8,
+	9, 9,
+	10, 10,
+	11, 11
+}
 local tiles_setup_4_players = {
 			{ 0, 2},	{ 1, 2},	{ 2, 2},
 		{-1, 1},	{ 0, 1},	{ 1, 1},	{ 2, 1},
@@ -65,6 +76,18 @@ local resource_counts_4_players = {}
 	resource_counts_4_players[ Terrain.Fields ] = 4
 	resource_counts_4_players[ Terrain.Forest ] = 4
 
+
+local chits_6_players = {
+	2, 2, 2,
+	3, 3, 3,
+	4, 4, 4,
+	5, 5, 5,
+	6, 6, 6,
+	8, 8, 8,
+	9, 9, 9,
+	10, 10, 10,
+	11, 11, 11
+}
 local tiles_setup_6_players = {
 				{ 0, 3},	{ 1, 3},	{ 2, 3},
 			{-1, 2},	{ 0, 2},	{ 1, 2},	{ 2, 2},
@@ -88,19 +111,32 @@ function ENT:CreateTiles()
 	local player_count = self:GetGame():GetNumPlayers()
 	local resource_counts
 	local tiles_setup
+	local chits
 	
 	if( player_count > 4 ) then
 		
 		--Generate larger board
 		resource_counts = resource_counts_6_players
 		tiles_setup = tiles_setup_6_players
+		chits = table.Copy( chits_6_players )
 		
 	else
 		
 		--Generate regular board
 		resource_counts = resource_counts_4_players
 		tiles_setup = tiles_setup_4_players
+		chits = table.Copy( chits_4_players )
 		
+	end
+	
+	--Shuffle chits
+	local n = #chits
+	while( n > 0 ) do
+		local k = math.random(n)
+		local temp = chits[n]
+		chits[n] = chits[k]
+		chits[k] = temp
+		n = n - 1
 	end
 	
 	local tile_count = 0
@@ -109,7 +145,7 @@ function ENT:CreateTiles()
 		for i = 1, count do
 			
 			tile_count = tile_count + 1
-			tiles[ tile_count ] = self:CreateTile( terrainType )
+			tiles[ tile_count ] = self:CreateTile( terrainType, chits[ tile_count ] )
 			
 		end
 		
@@ -142,7 +178,7 @@ function ENT:CreateTiles()
 	
 end
 
-function ENT:CreateTile( terrainType )
+function ENT:CreateTile( terrainType, tokenValue )
 	
 	local tile = ents.Create( "CatanTile" )
 	tile:SetTerrain( terrainType )
@@ -152,6 +188,8 @@ function ENT:CreateTile( terrainType )
 	
 	if( terrainType == Terrain.Desert ) then
 		self.desertTile = tile
+	else
+		tile:SetTokenValue( tokenValue )
 	end
 	
 	return tile

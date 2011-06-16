@@ -74,20 +74,6 @@ function GM.TurnManager:StartTurn()
 		
 		self.Players[self.Turn]:PlacePiece()
 		
-		if(self.InitilizationPhase == TurnPlacement.Forward) then
-			if(self.Turn == self.FirstTurn) then
-				self.Playing = true
-				return
-			else
-				self.Turn = self.Turn + 1
-			end
-		else
-			if(self.Turn == self.LastTurn) then
-				self.InitilizationPhase = TurnPlacement.Forward
-			else
-				self.Turn = self.Turn - 1
-			end
-		end
 	end
 end
 
@@ -96,5 +82,20 @@ function GM.TurnManager:Think()
 end
 
 function GM.TurnManager:EndTurn()
-
+	
+	if(self.InitilizationPhase == TurnPlacement.Forward) then
+		if(self.Turn == self.FirstTurn) then
+			self.Playing = true
+			return
+		else
+			self.Turn = self.Turn + 1
+		end
+	else
+		if(self.Turn == self.LastTurn) then
+			self.InitilizationPhase = TurnPlacement.Forward
+		else
+			self.Turn = self.Turn - 1
+		end
+	end
+	
 end
