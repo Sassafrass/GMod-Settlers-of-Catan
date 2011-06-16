@@ -37,6 +37,12 @@ function ENT:HasRobber()
 	return self:GetBoard():GetRobber():GetTile() == self
 end
 
+function ENT:IsLand()
+	
+	return self:GetTerrain() < Terrain.Water
+	
+end
+
 --[[
 	Vertexs
 	]]

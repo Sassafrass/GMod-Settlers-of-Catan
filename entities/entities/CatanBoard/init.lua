@@ -174,7 +174,33 @@ function ENT:CreateTiles()
 		
 	end
 	
+	local checkedtiles = {}
+	self:CreateWaterTiles( self.Tiles[ 0 ][ 0 ], checkedtiles )
 	--TODO: Center the board on the table
+	
+end
+
+function ENT:CreateWaterTiles( CTile, checked )
+	
+	checked[ CTile ] = true
+	
+	for _, dir in rpairs{ "UP", "DN", "LL", "UL", "LR", "UR" } do
+		
+		local tile = CTile[ "Get"..dir ]( CTile )
+		
+		ErrorNoHalt( dir, "\t", tile, "\n" )
+		if( not ValidEntity( tile ) ) then
+			
+			tile = self:CreateWaterTile( CTile:GetX(), CTile:GetY(), dir )
+			checked[ tile ] = true
+			
+		elseif( not checked[ tile ] ) then
+			
+			self:CreateWaterTiles( tile, checked )
+			
+		end
+		
+	end
 	
 end
 
@@ -183,7 +209,6 @@ function ENT:CreateTile( terrainType, tokenValue )
 	local tile = ents.Create( "CatanTile" )
 	tile:SetTerrain( terrainType )
 	tile:SetBoard( self )
-	tile:SetPos( self:GetPos() )
 	tile:SetAngles( Angle( 0, 90 + math.random(1,6) * 60, 0 ) )
 	
 	if( terrainType == Terrain.Desert ) then
@@ -191,6 +216,53 @@ function ENT:CreateTile( terrainType, tokenValue )
 	else
 		tile:SetTokenValue( tokenValue )
 	end
+	
+	return tile
+	
+end
+
+function ENT:CreateWaterTile( PosX, PosY, dir )
+	
+	if( dir == "UP" or dir == "UR" ) then
+		PosY = PosY + 1
+	end
+	if( dir == "DN" or dir == "LL" ) then
+		PosY = PosY - 1
+	end
+	if( dir == "LR" or dir == "UR" ) then
+		PosX = PosX + 1
+	end
+	if( dir == "LL" or dir == "UL" ) then
+		PosX = PosX - 1
+	end
+	
+	local ang = Angle( 0, -90, 0 )
+	if( dir == "UR" ) then
+		ang.y = ang.y - 60
+	elseif( dir == "LR" ) then
+		ang.y = ang.y - 120
+	elseif( dir == "DN" ) then
+		ang.y = ang.y - 180
+	elseif( dir == "LL" ) then
+		ang.y = ang.y + 120
+	elseif( dir == "UL" ) then
+		ang.y = ang.y + 60
+	end
+	
+	local tile = self:CreateTile( math.Rand( 0, 1 ) > 0.3 and Terrain.Water or Terrain.Water + math.random(6) )
+	tile:SetPos( self:TileToWorld( PosX, PosY ) )
+	tile:SetAngles( ang )
+	tile:SetX( PosX )
+	tile:SetY( PosY )
+	if( not self.Tiles[ PosX ] ) then
+		
+		self.Tiles[ PosX ] = {}
+		
+	end
+	self.Tiles[ PosX ][ PosY ] = tile
+	
+	tile:Spawn()
+	tile:Activate()
 	
 	return tile
 	

@@ -15,7 +15,14 @@ ENUM( "Terrain",
 	"Mountains",
 	"Fields",
 	"Forest",
-	"Desert"
+	"Desert",
+	"Water",
+	"WaterAny",
+	"WaterWool",
+	"WaterBrick",
+	"WaterWheat",
+	"WaterWood",
+	"WaterIron"
 	)
 	
 
