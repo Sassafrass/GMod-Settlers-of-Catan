@@ -92,6 +92,42 @@ function ENT:Start()
 	
 end
 
+function ENT:OnPiecePlaced(CPlayer, Piece)
+	self:ChatBroadcast( "OnPiecePlaced" )
+	self.TurnManager:FinishTurn()
+end
+
+function ENT:Think()
+	if(self.TurnManager) then
+		self.TurnManager:Think()
+	end
+end
+-----------------------------------------------------------------------------
+
+function ENT:OnTurnStart(CPlayer)
+	self.TurnPlayer = CPlayer
+	self:ChatBroadcast("OnTurnStart: "..CPlayer:GetName())
+end
+
+function ENT:GatherPhase(NextPhase)
+	self:ChatBroadcast("GatherPhase")
+end
+
+function ENT:TradePhase(NextPhase)
+	self:ChatBroadcast("TradePhase")
+end
+
+function ENT:BuildPhase(NextPhase)
+	self:ChatBroadcast("BuildPhase")
+end
+
+function ENT:OnTurnEnd()
+	self.TurnPlayer = false
+	self:ChatBroadcast("OnTurnEnd")
+end
+
+-----------------------------------------------------------------------------
+
 function ENT:IsEveryoneReady()
 	
 	for _, CPl in pairs( self:GetPlayers() ) do

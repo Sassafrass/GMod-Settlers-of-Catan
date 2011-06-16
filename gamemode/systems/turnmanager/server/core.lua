@@ -7,6 +7,7 @@ ENUM( "TurnPlacement",
 	)
 
 ENUM( "TurnState",
+	"Init",
 	"Gather",
 	"Trade",
 	"Build"
@@ -20,8 +21,10 @@ function GM.TurnManager:GetTurnManager(CGame)
 	Table.Players = table.Copy(CGame:GetPlayers())
 	Table.PlayerCount = table.Count(Table.Players)
 	Table.Turn = 1
-	Table.TurnPhase = TurnState.Gather
+	Table.TurnTotal = 0
+	Table.TurnPhase = TurnState.Init
 	Table.Playing = false
+	Table.TurnFinished = false
 	Table.InitilizationPhase = TurnPlacement.Backward
 	Table.InitialRolls = {}
     return Table
@@ -39,10 +42,11 @@ function GM.TurnManager:SetupOrder()
 	
 	self.LastTurn = self.FirstTurn + 1
 	if(self.LastTurn > self.PlayerCount) then
-		self.LastTurn = 0
+		self.LastTurn = 1
 	end
 	
 	self.Turn = self.FirstTurn
+	
 	self:StartTurn()
 end
 
@@ -61,9 +65,21 @@ function GM.TurnManager:OnDiceRolled(CPlayer, Result)
 	end
 end
 
+function GM.TurnManager:FinishTurn()
+	self.TurnFinished = true
+end
+
+function GM.TurnManager:IsTurnFinished()
+	return self.TurnFinished
+end
+
 function GM.TurnManager:StartTurn()
+	self.TurnFinished = false
+	self.TurnTotal = self.TurnTotal + 1
 	if(self.Playing) then
-		self.TurnPhase = TurnState.Gather
+		self.TurnPhase = TurnState.Init
+		self.CGame:OnTurnStart(self.Players[self.Turn])
+		self:NextPhase()
 		
 	else // Setting up the board
 		if(self.Turn == 0) then
@@ -77,25 +93,56 @@ function GM.TurnManager:StartTurn()
 	end
 end
 
-function GM.TurnManager:Think()
+function GM.TurnManager:NextPhase(TurnTotal, TurnPhase)
+	if(TurnTotal and TurnPhase and (self.TurnTotal != TurnTotal or self.TurnPhase != TurnPhase)) -- Timer stuff
+		return
+	end
+	if(self.TurnPhase == TurnState.Build) then
+		self:FinishTurn()
+	else
+		if(self.TurnPhase == TurnState.Init) then
+			self.TurnPhase = TurnState.Gather
+			self.CGame:GatherPhase()
+		elseif(self.TurnPhase == TurnState.Gather) then
+			self.TurnPhase = TurnState.Trade
+			self.CGame:GatherPhase()
+		elseif(self.TurnPhase == TurnState.Trade) then
+			self.TurnPhase = TurnState.Build
+			self.CGame:BuildPhase()
+		end
+		timer.Simple(5, self.NextPhase, self, self.TurnTotal, self.TurnPhase)
+	end
+end
 
+function GM.TurnManager:Think()
+	if(self.TurnFinished) then
+		self:EndTurn()
+		self:StartTurn()
+	end
 end
 
 function GM.TurnManager:EndTurn()
-	
-	if(self.InitilizationPhase == TurnPlacement.Forward) then
-		if(self.Turn == self.FirstTurn) then
-			self.Playing = true
-			return
+	if(self.Playing) then
+		self.CGame:OnTurnEnd()
+		if(self.Turn == self.LastTurn) then
+			self.Turn = FirstTurn
 		else
 			self.Turn = self.Turn + 1
 		end
 	else
-		if(self.Turn == self.LastTurn) then
-			self.InitilizationPhase = TurnPlacement.Forward
+		if(self.InitilizationPhase == TurnPlacement.Forward) then
+			if(self.Turn == self.FirstTurn) then
+				self.Playing = true
+				return
+			else
+				self.Turn = self.Turn + 1
+			end
 		else
-			self.Turn = self.Turn - 1
+			if(self.Turn == self.LastTurn) then
+				self.InitilizationPhase = TurnPlacement.Forward
+			else
+				self.Turn = self.Turn - 1
+			end
 		end
 	end
-	
 end
