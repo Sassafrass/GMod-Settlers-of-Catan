@@ -87,14 +87,12 @@ function GM.TurnManager:StartTurn()
 		elseif(self.Turn > self.PlayerCount) then
 			self.Turn = 1
 		end
-		
-		self.Players[self.Turn]:PlacePiece()
-		
+		self.CGame:PiecePlacement(self.Players[self.Turn], self.InitilizationPhase == TurnPlacement.Forward)
 	end
 end
 
 function GM.TurnManager:NextPhase(TurnTotal, TurnPhase)
-	if(TurnTotal and TurnPhase and (self.TurnTotal != TurnTotal or self.TurnPhase != TurnPhase)) -- Timer stuff
+	if(TurnTotal and TurnPhase and (self.TurnTotal != TurnTotal or self.TurnPhase != TurnPhase)) then -- Timer stuff
 		return
 	end
 	if(self.TurnPhase == TurnState.Build) then

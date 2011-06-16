@@ -92,17 +92,22 @@ function ENT:Start()
 	
 end
 
-function ENT:OnPiecePlaced(CPlayer, Piece)
-	self:ChatBroadcast( "OnPiecePlaced" )
-	self.TurnManager:FinishTurn()
-end
-
 function ENT:Think()
 	if(self.TurnManager) then
 		self.TurnManager:Think()
 	end
 end
 -----------------------------------------------------------------------------
+
+function ENT:PiecePlacement(CPlayer, LastPiece)
+	CPlayer:PlacePiece()
+	self:ChatBroadcast("PiecePlacement: "..CPlayer:GetName())
+end
+
+function ENT:OnPiecePlaced(CPlayer, Piece)
+	self:ChatBroadcast( "OnPiecePlaced" )
+	self.TurnManager:FinishTurn()
+end
 
 function ENT:OnTurnStart(CPlayer)
 	self.TurnPlayer = CPlayer
