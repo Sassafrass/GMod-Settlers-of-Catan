@@ -79,18 +79,22 @@ end
 
 function GM.TurnManager:StartTurn()
 	self.TurnFinished = false
+	
 	self.TurnTotal = self.TurnTotal + 1
+	
+	if(self.Turn == 0) then
+		self.Turn = self.PlayerCount
+	elseif(self.Turn > self.PlayerCount) then
+		self.Turn = 1
+	end
+	
+	self.CGame:OnTurnStart(self.Players[self.Turn])
+	
 	if(self.Playing) then
 		self.TurnPhase = TurnState.Init
-		self.CGame:OnTurnStart(self.Players[self.Turn])
 		self:NextPhase()
 		
 	else // Setting up the board
-		if(self.Turn == 0) then
-			self.Turn = self.PlayerCount
-		elseif(self.Turn > self.PlayerCount) then
-			self.Turn = 1
-		end
 		self.CGame:PiecePlacement(self.Players[self.Turn], self.InitilizationPhase == TurnPlacement.Forward)
 	end
 end
@@ -124,13 +128,9 @@ function GM.TurnManager:Think()
 end
 
 function GM.TurnManager:EndTurn()
+	self.CGame:OnTurnEnd()
 	if(self.Playing) then
-		self.CGame:OnTurnEnd()
-		if(self.Turn == self.LastTurn) then
-			self.Turn = FirstTurn
-		else
-			self.Turn = self.Turn + 1
-		end
+		self.Turn = self.Turn + 1
 	else
 		if(self.InitilizationPhase == TurnPlacement.Forward) then
 			if(self.Turn == self.FirstTurn) then

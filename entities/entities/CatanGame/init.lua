@@ -114,7 +114,7 @@ function ENT:OnPiecePlaced(CPlayer, Piece)
 end
 
 function ENT:OnTurnStart(CPlayer)
-	self.TurnPlayer = CPlayer
+	self.dt.ActivePlayer = CPlayer
 	self:ChatBroadcast("OnTurnStart: "..CPlayer:GetName())
 end
 
@@ -131,7 +131,7 @@ function ENT:BuildPhase(NextPhase)
 end
 
 function ENT:OnTurnEnd()
-	self.TurnPlayer = false
+	self.dt.ActivePlaye = NullEntity()
 	self:ChatBroadcast("OnTurnEnd")
 end
 
