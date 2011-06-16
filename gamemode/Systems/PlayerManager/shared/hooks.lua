@@ -68,6 +68,15 @@ function GM:SetupMove( pl, mv )
 	mv:SetSideSpeed( 0 )
 	mv:SetVelocity( Vector(0) )
 	
+	if( CLIENT ) then
+		
+		local trPos = GetPlayerTrace()
+		if( trPos ) then
+			mv:SetVelocity( trPos )
+		end
+		
+	end
+	
 end
 
 function GM:Move( pl, data )
@@ -75,6 +84,12 @@ function GM:Move( pl, data )
 	data:SetForwardSpeed( 0 )
 	data:SetUpSpeed( 0 )
 	data:SetSideSpeed( 0 )
+	local trPos = data:GetVelocity()
 	data:SetVelocity( Vector(0) )
+	
+	local CPlayer = pl:GetCPlayer()
+	if( not ValidEntity( CPlayer ) ) then return end
+	
+	CPlayer.trPos = trPos
 	
 end

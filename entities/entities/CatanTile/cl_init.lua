@@ -19,7 +19,9 @@ function ENT:Initialize()
 		else
 			self.Chit:SetSkin( t - 3 )
 		end
-		self.Chit:SetPos( self:GetPos() + Vector( 0, 0, self:OBBMaxs().z ) )
+		self.ChitRestPos = Vector( 0, 0, self:OBBMaxs().z )
+		self.ChitHoverPos = Vector( 0, 0, self:OBBMaxs().z + 30 )
+		self.Chit:SetPos( self:GetPos() )
 		self.Chit:SetAngles( self:GetAngles() )
 		self.ChitScale = 0.75
 		self.Chit:SetModelScale( Vector() * self.ChitScale )
@@ -31,7 +33,40 @@ end
 surface.CreateFont ( "coolvetica", 40, 400, true, false, "CV20", true )
 function ENT:Draw()
 	
+	local board = self:GetBoard()
+	if( not board ) then return end
+	
 	self:DrawModel()
+	
+	if( not self.Chit ) then return end
+	
+	local tr = GetPlayerTrace()
+	if( not tr ) then
+		
+		self.Chit:SetPos( LerpVector( 0.5, self.Chit:GetPos(), self:LocalToWorld( self.ChitRestPos ) ) )
+		self.Chit:SetAngles( LerpAngle( 0.5, self.Chit:GetAngles(), self:GetAngles() ) )
+		self.Chit:SetModelScale( Vector() * Lerp( 0.5, self.ChitScale, 0.75 ) )
+		return
+		
+	end
+	
+	local x, y = board:WorldToTile( tr )
+	if( board:GetTileAt( x, y ) == self ) then
+		
+		self.Chit:SetPos( LerpVector( 0.5, self.Chit:GetPos(), self:LocalToWorld( self.ChitHoverPos ) ) )
+		local ang = ( self.Chit:GetPos() - GAMEMODE.View.origin ):Angle()
+		ang:RotateAroundAxis( ang:Forward(), 90 )
+		ang:RotateAroundAxis( ang:Right(), 90 )
+		self.Chit:SetAngles( LerpAngle( 0.5, self.Chit:GetAngles(), ang ) )
+		self.Chit:SetModelScale( Vector() * Lerp( 0.5, self.ChitScale, 1 ) )
+		
+	else
+		
+		self.Chit:SetPos( LerpVector( 0.5, self.Chit:GetPos(), self:LocalToWorld( self.ChitRestPos ) ) )
+		self.Chit:SetAngles( LerpAngle( 0.5, self.Chit:GetAngles(), self:GetAngles() ) )
+		self.Chit:SetModelScale( Vector() * Lerp( 0.5, self.ChitScale, 0.75 ) )
+	
+	end
 	
 end
 
@@ -106,19 +141,5 @@ function ENT:DebugDraw( tr )
 	local w, h = surface.GetTextSize( "" )
 	draw.DrawText( tostring( self:GetX() ) .. ", " .. tostring( self:GetY() ), "CV20", 0, 0, color_white, TEXT_ALIGN_CENTER )
 	-- draw.DrawText( tostring( TerrainName( self:GetTerrain() ) ), "CV20", 0, h + 2, color_white, TEXT_ALIGN_CENTER )
-	
-	local board = self:GetBoard()
-	if( not board ) then return end
-	
-	local x, y = board:WorldToTile( tr )
-	if( board:GetTileAt( x, y ) == self ) then
-		
-		self:SetColor( 100, 100, 100, 255 )
-		
-	else
-	
-		self:SetColor( 255, 255, 255, 255 )
-	
-	end
 	
 end
