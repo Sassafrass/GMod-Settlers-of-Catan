@@ -99,6 +99,10 @@ function ENT:Think()
 end
 -----------------------------------------------------------------------------
 
+function ENT:GetActivePlayer()
+	return self.TurnManager:GetActivePlayer()
+end
+
 function ENT:PiecePlacement(CPlayer, LastPiece)
 	CPlayer:PlacePiece()
 	self:ChatBroadcast("PiecePlacement: "..CPlayer:GetName())

@@ -65,6 +65,10 @@ function GM.TurnManager:OnDiceRolled(CPlayer, Result)
 	end
 end
 
+function GM.TurnManager:GetActivePlayer()
+	return self.Players[self.Turn]
+end
+
 function GM.TurnManager:FinishTurn()
 	self.TurnFinished = true
 end
