@@ -133,6 +133,9 @@ function GM:CreateMove( cmd )
 	local CPl = LocalCPlayer()
 	if( ValidEntity( CPl ) ) then
 		
+		local trPos = GetPlayerTrace()
+		if( not trPos ) then return end
+		
 		local ang
 		
 		if( ValidEntity( lastPlayerToTalk ) and lastPlayerToTalk ~= LocalPlayer() and CurTime() - lastTimePlayerTalked < 2 ) then
@@ -158,16 +161,13 @@ function GM:CreateMove( cmd )
 			
 		else
 			
-			local tracePos = GetPlayerTrace( LocalPlayer() )
-			
-			if( not tracePos ) then return end
 			local eyeattachment = LocalPlayer():LookupAttachment( "eyes" )
 			if ( eyeattachment == 0 ) then return end
 			local attachment = LocalPlayer():GetAttachment( eyeattachment )
 			if ( not attachment ) then return end
 			if ( not attachment.Pos ) then return end
 			
-			ang = (tracePos - SkyboxToWorld(attachment.Pos)):Angle()
+			ang = (trPos - SkyboxToWorld(attachment.Pos)):Angle()
 			ang.y = ang.y - CPl:GetAngles().y
 			ang.y = math.NormalizeAngle( ang.y )
 			ang.y = math.Clamp( ang.y, -45, 45 )
@@ -179,6 +179,9 @@ function GM:CreateMove( cmd )
 		end
 		
 		cmd:SetViewAngles( ang )
+		cmd:SetForwardMove( trPos.x )
+		cmd:SetSideMove( trPos.y )
+		cmd:SetUpMove( trPos.z )
 		
 	end
 	

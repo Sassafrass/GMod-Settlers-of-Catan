@@ -24,10 +24,6 @@ function ENT:Initialize()
 	self.desertTile = nil
 	
 	self:SharedInitialize()
-	self:CreateTiles()
-	self:CreatePieces()
-	
-	self:OnBoardSpawned()
 	
 	local phys = self:GetPhysicsObject()
 	if( ValidEntity( phys ) ) then	
@@ -51,7 +47,7 @@ function ENT:SetGame( CGame )
 end
 
 local chits_4_players = {
-	2, 2,
+	2,
 	3, 3,
 	4, 4,
 	5, 5,
@@ -59,7 +55,8 @@ local chits_4_players = {
 	8, 8,
 	9, 9,
 	10, 10,
-	11, 11
+	11, 11,
+	12
 }
 local tiles_setup_4_players = {
 			{ 0, 2},	{ 1, 2},	{ 2, 2},
@@ -78,7 +75,7 @@ local resource_counts_4_players = {}
 
 
 local chits_6_players = {
-	2, 2, 2,
+	2, 2,
 	3, 3, 3,
 	4, 4, 4,
 	5, 5, 5,
@@ -86,7 +83,8 @@ local chits_6_players = {
 	8, 8, 8,
 	9, 9, 9,
 	10, 10, 10,
-	11, 11, 11
+	11, 11, 11,
+	12, 12,
 }
 local tiles_setup_6_players = {
 				{ 0, 3},	{ 1, 3},	{ 2, 3},
@@ -139,6 +137,7 @@ function ENT:CreateTiles()
 		n = n - 1
 	end
 	
+	--Create tiles
 	local tile_count = 0
 	for terrainType, count in pairs( resource_counts ) do
 		
@@ -151,12 +150,13 @@ function ENT:CreateTiles()
 		
 	end
 	
+	--Shuffle tiles
 	for _, tile_pos in rpairs( tiles_setup ) do
 		
 		local x, y = tile_pos[1], tile_pos[2]
-		if( not self.Tiles[ x ] ) then
+		if( not self.TileMatrix[ x ] ) then
 			
-			self.Tiles[ x ] = {}
+			self.TileMatrix[ x ] = {}
 			
 		end
 		
@@ -166,17 +166,96 @@ function ENT:CreateTiles()
 		tile:SetY( y )
 		tile:CreateVertexs()
 		tile:CreateEdges()
-		self.Tiles[ x ][ y ] = tile
+		self.TileMatrix[ x ][ y ] = tile
+		self.Tiles[ #self.Tiles + 1 ] = tile
 		tile_count = tile_count - 1
+		
+	end
+	
+	--[[
+		Important: Alternatively, you can use a fully random set-up. Place 1
+		token on each land hex. Start at one corner of the island, and place
+		the number tokens in random order. In such case, the tokens with
+		the red numbers must not be next to each other. You may have to
+		swap tokens to ensure that no red numbers are on adjacent hexes.
+		]]
+	
+	--Find adjacent red chits and swap them!!!!!!
+	
+	for _, tile in rpairs( self:GetTiles() ) do
+		
+		local bHighValue = tile:GetTokenValue() == 6 or tile:GetTokenValue() == 8
+		for _, t in pairs( tile:GetAdjacentTiles() ) do
+			
+			if( (t:GetTokenValue() == 6 or t:GetTokenValue() == 8) ) then
+				
+				if( bHighValue ) then
+					
+					for _, t2 in rpairs( self:GetTiles() ) do
+						
+						if( t2 ~= tile ) then
+							
+							local bSwappable = true
+							for _, t3 in pairs( t2:GetAdjacentTiles() ) do
+								
+								if( t3 ~= tile and (t3:GetTokenValue() == 6 or t3:GetTokenValue() == 8) ) then
+									
+									bSwappable = false
+									break
+									
+								end
+								
+							end
+							
+							if( bSwappable ) then
+								self:SwapTiles( tile, t2 )
+								break
+							end
+							
+						end
+						
+					end
+				
+				end
+				break
+				
+			end
+		
+		end
+		
+	end
+	
+	self:CreateWaterTiles( self.TileMatrix[ 0 ][ 0 ], {} )
+	
+	for _, tile in pairs( self:GetTiles() ) do
 		
 		tile:Spawn()
 		tile:Activate()
 		
 	end
 	
-	local checkedtiles = {}
-	self:CreateWaterTiles( self.Tiles[ 0 ][ 0 ], checkedtiles )
 	--TODO: Center the board on the table
+	
+	self:OnBoardSpawned()
+	
+end
+
+function ENT:SwapTiles( tile1, tile2 )
+	
+	ErrorNoHalt( "Swapping ", tile1, tile2, "\n" )
+	local tx, ty = tile1:GetX(), tile1:GetY()
+	local tpos = tile1:GetPos()
+	local tang = tile1:GetAngles()
+	tile1:SetX( tile2:GetX() )
+	tile1:SetY( tile2:GetY() )
+	tile1:SetPos( tile2:GetPos() )
+	tile1:SetAngles( tile2:GetAngles() )
+	tile2:SetX( tx )
+	tile2:SetY( ty )
+	tile2:SetPos( tpos )
+	tile2:SetAngles( tang )
+	self.TileMatrix[ tile1:GetX() ][ tile1:GetY() ] = tile1
+	self.TileMatrix[ tile2:GetX() ][ tile2:GetY() ] = tile2
 	
 end
 
@@ -188,7 +267,6 @@ function ENT:CreateWaterTiles( CTile, checked )
 		
 		local tile = CTile[ "Get"..dir ]( CTile )
 		
-		ErrorNoHalt( dir, "\t", tile, "\n" )
 		if( not ValidEntity( tile ) ) then
 			
 			tile = self:CreateWaterTile( CTile:GetX(), CTile:GetY(), dir )
@@ -254,15 +332,13 @@ function ENT:CreateWaterTile( PosX, PosY, dir )
 	tile:SetAngles( ang )
 	tile:SetX( PosX )
 	tile:SetY( PosY )
-	if( not self.Tiles[ PosX ] ) then
+	if( not self.TileMatrix[ PosX ] ) then
 		
-		self.Tiles[ PosX ] = {}
+		self.TileMatrix[ PosX ] = {}
 		
 	end
-	self.Tiles[ PosX ][ PosY ] = tile
-	
-	tile:Spawn()
-	tile:Activate()
+	self.TileMatrix[ PosX ][ PosY ] = tile
+	self.Tiles[ #self.Tiles + 1 ] = tile
 	
 	return tile
 	

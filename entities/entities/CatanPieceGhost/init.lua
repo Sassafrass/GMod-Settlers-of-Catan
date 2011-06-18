@@ -3,34 +3,14 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-function GAMEMODE:CreateGhost( CBoard, CPlayer, PType )
-	
-	local g = ents.Create( "CatanPieceGhost" )
-	g:SetNoDraw( true )
-	g:SetBoard( CBoard )
-	g:SetPlayer( CPlayer )
-	g:Setup( PType )
-	g:Spawn()
-	g:Activate()
-	
-	return g
-	
-end
-
 function ENT:Initialize()
 	-- self:DrawShadow(false)
 	self:SetMoveType( MOVETYPE_NONE )
 end
 
-ENUM( "PieceType",
-	"Road",
-	"Village",
-	"City",
-	"Robber"
-	)
-
 function ENT:Setup( PType )
 	
+	self.PType = PType
 	if( PType == PieceType.Road ) then
 		
 		self:SetModel( "models/mrgiggles/sog/road.mdl" )
@@ -51,6 +31,14 @@ function ENT:Setup( PType )
 	
 end
 
+function ENT:SetPlayer( CPl )
+	
+	self.dt.Player = CPl
+	local r, g, b, a = CPl:GetCColor()
+	self:SetColor( r, g, b, 200 )
+	
+end
+
 function ENT:Think()
 	
 	local c = self:GetPlayer()
@@ -59,8 +47,18 @@ function ENT:Think()
 	
 	if( pos ) then
 		
-		self:SetPos( pos )
-		nodraw = false
+		if( self.PType == PieceType.Village ) then
+			
+			local vert = self:GetBoard():GetVertexAt( self:GetBoard():WorldToVertex( pos ) )
+			if( vert ) then
+				
+				nodraw = false
+				self:SetPos( vert:GetPos() )
+				self:SetAngles( vert:GetAngles() )
+				
+			end
+			
+		end
 		
 	end
 	

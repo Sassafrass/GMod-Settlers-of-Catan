@@ -6,6 +6,7 @@ include( "commands/requestcolor.lua" )
 include( "commands/forfeit.lua" )
 include( "commands/start.lua" )
 include( "commands/ready.lua" )
+include( "commands/placepiece.lua" )
 
 function ENT:Initialize()
 	
@@ -42,12 +43,6 @@ function ENT:OnDiceRolled( CPlayer, result )
 	
 end
 
-ENUM( "GAME_STATE",
-	"LOBBY",
-	"STARTING",
-	"STARTED"
-	)
-
 function ENT:SetState( game_state )
 	
 	self.dt.GameState = game_state
@@ -79,7 +74,7 @@ function ENT:StartGame()
 	self.TurnManager = GAMEMODE.TurnManager:GetTurnManager( self )
 	
 	self:ChatBroadcast( "The game is starting in 5 seconds" )
-	timer.Simple( 5, self.Start, self )
+	timer.Simple( 1, self.Start, self )
 	
 	return true
 	
@@ -88,7 +83,10 @@ end
 function ENT:Start()
 	
 	self:ChatBroadcast( "The game has started" )
+	self:SetState( GAME_STATE.STARTED )
 	self.TurnManager:OnGameStarted()
+	self:GetBoard():CreateTiles()
+	self:GetBoard():CreatePieces()
 	
 end
 
@@ -97,25 +95,99 @@ function ENT:Think()
 		self.TurnManager:Think()
 	end
 end
+
 -----------------------------------------------------------------------------
 
 function ENT:GetActivePlayer()
 	return self.TurnManager:GetActivePlayer()
 end
 
-function ENT:PiecePlacement(CPlayer, LastPiece)
-	CPlayer:PlacePiece()
-	self:ChatBroadcast("PiecePlacement: "..CPlayer:GetName())
-end
-
-function ENT:OnPiecePlaced(CPlayer, Piece)
-	self:ChatBroadcast( "OnPiecePlaced" )
-	self.TurnManager:FinishTurn()
-end
-
-function ENT:OnTurnStart(CPlayer)
+function ENT:PlayerTurnStart( CPlayer )
+	
 	self.dt.ActivePlayer = CPlayer
+	
+	if( self:GetState() == GAME_STATE.SETUP ) then
+		
+		self:PlayerBuildPiece( CPlayer, PieceType.Village )
+		
+	end
+	
+	self:OnTurnStart( CPlayer )
+	
+end
+
+function ENT:PlayerBuildPiece( CPl, PType )
+	
+	CPl:ChatPrint( "You built a piece" )
+	CPl:SetBuiltPiece( PType )
+	self:SetupPieceGhost( PType )
+	
+	umsg.Start( "sog_builtpiece", CPl:GetPlayer() )
+		umsg.Char( PType-128 )
+	umsg.End()
+	
+	self:OnBuildPiece( CPl, PType )
+	
+end
+
+function ENT:OnBuildPiece( CPl, PType )
+end
+
+function ENT:SetupPieceGhost( PType )
+	
+	local g = ents.Create( "CatanPieceGhost" )
+	g:SetNoDraw( true )
+	g:SetBoard( self:GetBoard() )
+	g:SetPlayer( self:GetActivePlayer() )
+	g:Setup( PType )
+	g:Spawn()
+	g:Activate()
+	
+	self.PieceGhost = g
+	
+end
+
+function ENT:RemovePieceGhost()
+	
+	self.PieceGhost:Remove()
+	self.PieceGhost = nil
+	
+end
+
+function ENT:OnPiecePlaced( CPlayer, Piece )
+	
+	self:ChatBroadcast( "OnPiecePlaced" )
+	
+	if( self.PieceGhost ) then
+		
+		self:RemovePieceGhost()
+		
+	end
+	
+	if( self:GetState() == GAME_STATE.SETUP ) then
+		
+		if( Piece.PieceType == PieceType.Village ) then
+			
+			self:PlayerBuildPiece( CPlayer, PieceType.Road )
+			CPlayer.PreviousPlacedVillage = Piece --Make sure the road is placed adjacent to this village
+			
+		elseif( Piece.PieceType == PieceType.Road ) then
+			
+			CPlayer.PreviousPlaceVillage = nil
+			self.TurnManager:FinishTurn()
+			
+		end
+		
+	end
+	
+	-- self.TurnManager:FinishTurn()
+	
+end
+
+function ENT:OnTurnStart( CPlayer )
+	
 	self:ChatBroadcast("OnTurnStart: "..CPlayer:GetName())
+	
 end
 
 function ENT:GatherPhase(NextPhase)
@@ -288,7 +360,7 @@ end
 function ENT:CanPlayerLeave( CPl )
 	
 	assert( self:HasPlayer( CPl ) )
-	if( self:GetState() == GAME_STATE.STARTED ) then
+	if( self:GetState() >= GAME_STATE.STARTED ) then
 		
 		CPl:GetPlayer():ChatPrint( "You cannot leave a game in progress. Try requesting a forfeit." )
 		return false

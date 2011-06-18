@@ -8,22 +8,6 @@ CTILE_NARROW_WIDTH = CTILE_HEIGHT / math.cos( math.rad( 30 ) )
 CTILE_SIZE = CTILE_NARROW_WIDTH * 0.5
 CTILE_SEGMENT = CTILE_SIZE * math.sin( math.rad( 30 ) )
 CTILE_WIDTH = (3*CTILE_HALF_HEIGHT) / (2*math.sin( math.rad( 60 ) ))
-
-ENUM( "Terrain",
-	"Hills",
-	"Pasture",
-	"Mountains",
-	"Fields",
-	"Forest",
-	"Desert",
-	"Water",
-	"WaterAny",
-	"WaterWool",
-	"WaterBrick",
-	"WaterWheat",
-	"WaterWood",
-	"WaterIron"
-	)
 	
 
 function TerrainName( terrainType )
@@ -47,8 +31,11 @@ end
 function ENT:SharedInitialize()
 
 	self.Tiles = {}
+	self.TileMatrix = {}
 	self.Vertexs = {}
+	self.VertexMatrix = {}
 	self.Edges = {}
+	self.EdgeMatrix = {}
 	
 end
 
@@ -56,6 +43,24 @@ function ENT:SetupDataTables()
 	
 	self:DTVar( "Entity", 0, "Game" )
 	self:DTVar( "Entity", 1, "Robber" )
+	
+end
+
+function ENT:GetTiles()
+	
+	return self.Tiles
+	
+end
+
+function ENT:GetVerts()
+	
+	return self.Vertexs
+	
+end
+
+function ENT:GetEdges()
+	
+	return self.Edges
 	
 end
 
@@ -227,27 +232,27 @@ end
 
 function ENT:GetTileAt( PosX, PosY )
 	
-	if( not self.Tiles ) then return end
-	if( not self.Tiles[ PosX ] ) then return end
+	if( not self.TileMatrix ) then return end
+	if( not self.TileMatrix[ PosX ] ) then return end
 	
-	return self.Tiles[ PosX ][ PosY ]
+	return self.TileMatrix[ PosX ][ PosY ]
 	
 end
 
 function ENT:GetVertexAt( PosX, PosY )
 	
-	if( not self.Vertexs ) then return end
-	if( not self.Vertexs[ PosX ] ) then return end
+	if( not self.VertexMatrix ) then return end
+	if( not self.VertexMatrix[ PosX ] ) then return end
 	
-	return self.Vertexs[ PosX ][ PosY ]
+	return self.VertexMatrix[ PosX ][ PosY ]
 	
 end
 
 function ENT:GetEdgeAt( PosX, PosY )
 	
-	if( not self.Edges ) then return end
-	if( not self.Edges[ PosX ] ) then return end
+	if( not self.EdgeMatrix ) then return end
+	if( not self.EdgeMatrix[ PosX ] ) then return end
 	
-	return self.Edges[ PosX ][ PosY ]
+	return self.EdgeMatrix[ PosX ][ PosY ]
 	
 end

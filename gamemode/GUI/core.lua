@@ -30,9 +30,31 @@ function GM:GUIMousePressed( mc )
 			
 		end
 		
+	elseif( mc == MOUSE_LEFT ) then
+		
+		local trPos = GetPlayerTrace()
+		local CPl = LocalCPlayer()
+		if( not trPos or not ValidEntity( CPl ) ) then return end
+		
+		CPl:PlacePiece( trPos )
+		
 	end
 	
 end
+
+usermessage.Hook( "sog_builtpiece", function( um )
+	
+	local PType = tonumber( um:ReadChar() ) + 128
+	ErrorNoHalt( PType, "\n" )
+	GAMEMODE.PlacingPiece = PType
+	
+end )
+
+usermessage.Hook( "sog_pieceplaced", function( um )
+	
+	GAMEMODE.PlacingPiece = nil
+	
+end )
 
 function GM:RenderScreenspaceEffects()
 	

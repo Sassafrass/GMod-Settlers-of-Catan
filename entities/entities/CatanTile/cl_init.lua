@@ -3,13 +3,14 @@ include("shared.lua")
 
 function ENT:Initialize()
 	
-	if( not self:GetBoard().Tiles[ self:GetX() ] ) then
+	if( not self:GetBoard().TileMatrix[ self:GetX() ] ) then
 		
-		self:GetBoard().Tiles[ self:GetX() ] = {}
+		self:GetBoard().TileMatrix[ self:GetX() ] = {}
 		
 	end
 	
-	self:GetBoard().Tiles[ self:GetX() ][ self:GetY() ] = self
+	self:GetBoard().TileMatrix[ self:GetX() ][ self:GetY() ] = self
+	self:GetBoard().Tiles[ #self:GetBoard().Tiles + 1 ] = self
 	
 	local t = self:GetTokenValue()
 	if( t > 0 ) then
@@ -33,40 +34,40 @@ end
 surface.CreateFont ( "coolvetica", 40, 400, true, false, "CV20", true )
 function ENT:Draw()
 	
-	local board = self:GetBoard()
-	if( not board ) then return end
+	-- local board = self:GetBoard()
+	-- if( not board ) then return end
 	
 	self:DrawModel()
 	
 	if( not self.Chit ) then return end
 	
-	local tr = GetPlayerTrace()
-	if( not tr ) then
+	-- local tr = GetPlayerTrace()
+	-- if( not tr ) then
+		
+		-- self.Chit:SetPos( LerpVector( 0.5, self.Chit:GetPos(), self:LocalToWorld( self.ChitRestPos ) ) )
+		-- self.Chit:SetAngles( LerpAngle( 0.5, self.Chit:GetAngles(), self:GetAngles() ) )
+		-- self.Chit:SetModelScale( Vector() * Lerp( 0.5, self.ChitScale, 0.75 ) )
+		-- return
+		
+	-- end
+	
+	-- local x, y = board:WorldToTile( tr )
+	-- if( board:GetTileAt( x, y ) == self ) then
+		
+		-- self.Chit:SetPos( LerpVector( 0.5, self.Chit:GetPos(), self:LocalToWorld( self.ChitHoverPos ) ) )
+		-- local ang = ( self.Chit:GetPos() - GAMEMODE.View.origin ):Angle()
+		-- ang:RotateAroundAxis( ang:Forward(), 90 )
+		-- ang:RotateAroundAxis( ang:Right(), 90 )
+		-- self.Chit:SetAngles( LerpAngle( 0.5, self.Chit:GetAngles(), ang ) )
+		-- self.Chit:SetModelScale( Vector() * Lerp( 0.5, self.ChitScale, 1 ) )
+		
+	-- else
 		
 		self.Chit:SetPos( LerpVector( 0.5, self.Chit:GetPos(), self:LocalToWorld( self.ChitRestPos ) ) )
 		self.Chit:SetAngles( LerpAngle( 0.5, self.Chit:GetAngles(), self:GetAngles() ) )
 		self.Chit:SetModelScale( Vector() * Lerp( 0.5, self.ChitScale, 0.75 ) )
-		return
-		
-	end
 	
-	local x, y = board:WorldToTile( tr )
-	if( board:GetTileAt( x, y ) == self ) then
-		
-		self.Chit:SetPos( LerpVector( 0.5, self.Chit:GetPos(), self:LocalToWorld( self.ChitHoverPos ) ) )
-		local ang = ( self.Chit:GetPos() - GAMEMODE.View.origin ):Angle()
-		ang:RotateAroundAxis( ang:Forward(), 90 )
-		ang:RotateAroundAxis( ang:Right(), 90 )
-		self.Chit:SetAngles( LerpAngle( 0.5, self.Chit:GetAngles(), ang ) )
-		self.Chit:SetModelScale( Vector() * Lerp( 0.5, self.ChitScale, 1 ) )
-		
-	else
-		
-		self.Chit:SetPos( LerpVector( 0.5, self.Chit:GetPos(), self:LocalToWorld( self.ChitRestPos ) ) )
-		self.Chit:SetAngles( LerpAngle( 0.5, self.Chit:GetAngles(), self:GetAngles() ) )
-		self.Chit:SetModelScale( Vector() * Lerp( 0.5, self.ChitScale, 0.75 ) )
-	
-	end
+	-- end
 	
 end
 

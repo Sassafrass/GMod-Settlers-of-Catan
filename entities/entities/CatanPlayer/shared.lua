@@ -99,6 +99,12 @@ function ENT:ColorID()
 	
 end
 
+function ENT:GetCColor()
+	
+	return ColorIDToPlayerColor( self:ColorID() )
+	
+end
+
 function ENT:PlayerID()
 	
 	return self.dt.PlayerID
@@ -124,6 +130,12 @@ function ENT:GetEyeTarget()
 end
 
 function ENT:IsReady()
+	
+	return self.readyflag
+	
+end
+
+function ENT:GetReady()
 	
 	return self.readyflag
 	

@@ -78,5 +78,3 @@ function ENT:GetPlayerByID( id )
 	return self.Players[ id ]
 	
 end
-
-ENUM( "PlayerColor", "Red", "Blue", "Green", "Orange", "White", "Brown" )

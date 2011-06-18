@@ -47,3 +47,12 @@ function SkyboxToWorld( pos )
 	return (pos - GAMEMODE.skycampos) * 16
 	
 end
+
+function ColorIDToPlayerColor( id )
+	
+	local col = PLAYER_COLORS[ id ]
+	if( not col ) then return 255, 255, 255, 255 end
+	
+	return col.r, col.g, col.b, col.a
+	
+end

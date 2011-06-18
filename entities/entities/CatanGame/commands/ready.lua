@@ -20,13 +20,15 @@ concommand.Add( "sog_ready", function( pl, cmd, args )
 		
 	end
 	
-	if( CGame:GetState() ~= GAME_STATE.LOBBY ) then
+	if( CGame:GetState() >= GAME_STATE.STARTED ) then
 		
 		pl:ChatPrint( "You can only readyup in a lobby" )
 		return
 		
 	end
 	
-	CPl:SetReady( tobool( args[1] ) )
+	if( CPl:GetReady() ~= tobool( args[1] ) ) then
+		CPl:SetReady( tobool( args[1] ) )
+	end
 	
 end )

@@ -67,6 +67,24 @@ function ENT:ChatPrint( msg )
 	
 end
 
+function ENT:SetBuiltPiece( PType )
+	
+	self.BuiltPiece = PType
+	
+end
+
+function ENT:GetBuiltPiece( PType )
+	
+	return self.BuiltPiece
+	
+end
+
+function ENT:HasBuiltPiece()
+	
+	return tobool( self.BuiltPiece )
+	
+end
+
 function ENT:SetGame( CGame )
 	
 	self.dt.Game = CGame
@@ -110,39 +128,45 @@ function ENT:RollDie()
 	
 	self:ChatPrint( "You rolled the dice" )
 	timer.Simple( 4, function()
-		self:GetGame():OnDiceRolled( self, math.random( 2, 12 ) )
+		if( self:GetPlayer():IsBot() ) then
+			self:GetGame():OnDiceRolled( self, 2 )
+		else
+			self:GetGame():OnDiceRolled( self, math.random( 2, 12 ) )
+		end
 	end )
 	
 end
 
-function ENT:PlacePiece( PType, PosX, PosY, piece )
+function ENT:BuildPiece( PType )
 	
-	if( PType == PieceType.Robber ) then
+	self:GetGame():PlayerBuildPiece( self, PType )
+	
+end
+
+function ENT:PlacePiece( PosX, PosY )
+	
+	if( not self:HasBuiltPiece() ) then return end
+	
+	local PType = self:GetBuiltPiece()
+	
+	local piece = self:GetGame():CreatePiece( self, PType )
+	if( PType == PieceType.Village ) then
 		
-		local tile = self:GetGame():GetBoard():GetTileAt( PosX, PosY )
+		local vert = self:GetGame():GetBoard():GetVertexAt( PosX, PosY )
+		vert:SetPiece( piece )
+		piece:SetPos( vert:GetPos() )
+		piece:SetAngles( vert:GetAngles() )
 		
-		piece:SetPos( tile:GetPos() )
+	elseif( PType == PieceType.Road ) then
 		
-	else
-		
-		piece = self:GetGame():CreatePiece( self, PType )
-		if( PType == PieceType.Village ) then
-			
-			local vert = self:GetGame():GetBoard():GetVertexAt( PosX, PosY )
-			vert:SetPiece( piece )
-			piece:SetPos( vert:GetPos() )
-			piece:SetAngles( vert:GetAngles() )
-			
-		elseif( PType == PieceType.Road ) then
-			
-			local edge = self:GetGame():GetBoard():GetEdgeAt( PosX, PosY )
-			edge:SetPiece( piece )
-			piece:SetPos( edge:GetPos() )
-			piece:SetAngles( edge:GetAngles() )
-			
-		end
+		local edge = self:GetGame():GetBoard():GetEdgeAt( PosX, PosY )
+		edge:SetPiece( piece )
+		piece:SetPos( edge:GetPos() )
+		piece:SetAngles( edge:GetAngles() )
 		
 	end
+	
+	self:SetBuiltPiece( nil )
 	
 	self:GetGame():OnPiecePlaced( self, PType, piece )
 	

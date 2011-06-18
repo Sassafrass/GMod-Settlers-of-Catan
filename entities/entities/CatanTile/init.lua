@@ -61,14 +61,16 @@ function ENT:CreateVertex( PosX, PosY )
 	
 	local vert = ents.Create( "CatanTileVertex" )
 	vert:SetPos( self:GetBoard():VertexToWorld( PosX, PosY ) )
+	vert:SetAngles( Angle( 0, math.random(0, 12) * 30, 0 ) )
 	vert:SetX( PosX )
 	vert:SetY( PosY )
-	if( not self:GetBoard().Vertexs[ PosX ] ) then
+	if( not self:GetBoard().VertexMatrix[ PosX ] ) then
 		
-		self:GetBoard().Vertexs[ PosX ] = {}
+		self:GetBoard().VertexMatrix[ PosX ] = {}
 		
 	end
-	self:GetBoard().Vertexs[ PosX ][ PosY ] = vert
+	self:GetBoard().VertexMatrix[ PosX ][ PosY ] = vert
+	self:GetBoard().Vertexs[ #self:GetBoard().Vertexs + 1 ] = vert
 	vert:SetBoard( self:GetBoard() )
 	vert:Spawn()
 	vert:Activate()
@@ -99,12 +101,13 @@ function ENT:CreateEdge( PosX, PosY )
 	vert:SetPos( self:GetBoard():EdgeToWorld( PosX, PosY ) )
 	vert:SetX( PosX )
 	vert:SetY( PosY )
-	if( not self:GetBoard().Edges[ PosX ] ) then
+	if( not self:GetBoard().EdgeMatrix[ PosX ] ) then
 		
-		self:GetBoard().Edges[ PosX ] = {}
+		self:GetBoard().EdgeMatrix[ PosX ] = {}
 		
 	end
-	self:GetBoard().Edges[ PosX ][ PosY ] = vert
+	self:GetBoard().EdgeMatrix[ PosX ][ PosY ] = vert
+	self:GetBoard().Edges[ #self:GetBoard().Edges + 1 ] = vert
 	vert:SetBoard( self:GetBoard() )
 	vert:Spawn()
 	vert:Activate()

@@ -1,18 +1,6 @@
 
 GM.TurnManager = {}
 
-ENUM( "TurnPlacement",
-	"Backward",
-	"Forward"
-	)
-
-ENUM( "TurnState",
-	"Init",
-	"Gather",
-	"Trade",
-	"Build"
-	)
-
 function GM.TurnManager:GetTurnManager(CGame)
     local Table = {}
     setmetatable(Table, self)
@@ -23,7 +11,6 @@ function GM.TurnManager:GetTurnManager(CGame)
 	Table.Turn = 1
 	Table.TurnTotal = 0
 	Table.TurnPhase = TurnState.Init
-	Table.Playing = false
 	Table.TurnFinished = false
 	Table.InitilizationPhase = TurnPlacement.Backward
 	Table.InitialRolls = {}
@@ -47,6 +34,7 @@ function GM.TurnManager:SetupOrder()
 	
 	self.Turn = self.FirstTurn
 	
+	self.CGame:SetState( GAME_STATE.SETUP )
 	self:StartTurn()
 end
 
@@ -78,6 +66,7 @@ function GM.TurnManager:IsTurnFinished()
 end
 
 function GM.TurnManager:StartTurn()
+	
 	self.TurnFinished = false
 	
 	self.TurnTotal = self.TurnTotal + 1
@@ -88,15 +77,13 @@ function GM.TurnManager:StartTurn()
 		self.Turn = 1
 	end
 	
-	self.CGame:OnTurnStart(self.Players[self.Turn])
+	self.CGame:PlayerTurnStart(self.Players[self.Turn])
 	
-	if(self.Playing) then
+	if(self.CGame:GetState() == GAME_STATE.STRIFE) then
 		self.TurnPhase = TurnState.Init
 		self:NextPhase()
-		
-	else // Setting up the board
-		self.CGame:PiecePlacement(self.Players[self.Turn], self.InitilizationPhase == TurnPlacement.Forward)
 	end
+	
 end
 
 function GM.TurnManager:NextPhase(TurnTotal, TurnPhase)
@@ -129,7 +116,7 @@ end
 
 function GM.TurnManager:EndTurn()
 	self.CGame:OnTurnEnd()
-	if(self.Playing) then
+	if(self.CGame:GetState() == GAME_STATE.STRIFE) then
 		self.Turn = self.Turn + 1
 	else
 		if(self.InitilizationPhase == TurnPlacement.Forward) then
