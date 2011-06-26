@@ -86,10 +86,10 @@ function Lobby:List( CPlayer )
 	
 	for ID, CGame in pairs( Lobby.Games ) do
 		
-		local str = "[" .. ID .. "]" .. CGame:GetName()
+		local str = "[" .. ID .. "] " .. CGame:GetName()
 		if( CGame:GetPassword() ) then
 			
-			str = str .. "(Passworded)"
+			str = str .. " (Passworded)"
 			
 		end
 		
