@@ -147,6 +147,13 @@ function ENT:IsInGame()
 	
 end
 
+function ENT:IsPlayersTurn()
+	
+	if( not self:IsInGame() ) then return end
+	return self:GetGame():GetActivePlayer() == self
+	
+end
+
 function ENT:IsSpectatingGame()
 	
 	--TODO:

@@ -154,6 +154,26 @@ function ENT:RemovePieceGhost()
 	
 end
 
+function ENT:CreatePiece( CPlayer, PType )
+	
+	local ent
+	if( PType == PieceType.Village ) then
+		ent = ents.Create( "CatanPieceVillage" )
+	elseif( PType == PieceType.Road ) then
+		ent = ents.Create( "CatanPieceRoad" )
+	else
+		Error( "Invalid Piece Type ", PType, "\n" )
+	end
+	
+	ent:SetPlayer( CPlayer )
+	ent:SetBoard( self:GetBoard() )
+	ent:Spawn()
+	ent:Activate()
+	
+	return ent
+	
+end
+
 function ENT:OnPiecePlaced( CPlayer, Piece )
 	
 	self:ChatBroadcast( "OnPiecePlaced" )

@@ -58,6 +58,17 @@ function ENT:Think()
 				
 			end
 			
+		elseif( self.PType == PieceType.Road ) then
+			
+			local edge = self:GetBoard():GetEdgeAt( self:GetBoard():WorldToEdge( pos ) )
+			if( edge ) then
+				
+				nodraw = false
+				self:SetPos( edge:GetPos() )
+				self:SetAngles( edge:GetAngles() )
+				
+			end
+			
 		end
 		
 	end

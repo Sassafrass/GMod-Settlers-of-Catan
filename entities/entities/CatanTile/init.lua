@@ -97,19 +97,30 @@ end
 
 function ENT:CreateEdge( PosX, PosY )
 	
-	local vert = ents.Create( "CatanTileEdge" )
-	vert:SetPos( self:GetBoard():EdgeToWorld( PosX, PosY ) )
-	vert:SetX( PosX )
-	vert:SetY( PosY )
+	local edge = ents.Create( "CatanTileEdge" )
+	edge:SetPos( self:GetBoard():EdgeToWorld( PosX, PosY ) )
+	
+	if( PosY % 3 == 0 ) then
+		
+		edge:SetAngles( Angle( 0, -120, 0 ) )
+		
+	elseif( (PosY + 1) % 3 == 0 ) then
+		
+		edge:SetAngles( Angle( 0, 120, 0 ) )
+		
+	end
+	
+	edge:SetX( PosX )
+	edge:SetY( PosY )
 	if( not self:GetBoard().EdgeMatrix[ PosX ] ) then
 		
 		self:GetBoard().EdgeMatrix[ PosX ] = {}
 		
 	end
-	self:GetBoard().EdgeMatrix[ PosX ][ PosY ] = vert
-	self:GetBoard().Edges[ #self:GetBoard().Edges + 1 ] = vert
-	vert:SetBoard( self:GetBoard() )
-	vert:Spawn()
-	vert:Activate()
+	self:GetBoard().EdgeMatrix[ PosX ][ PosY ] = edge
+	self:GetBoard().Edges[ #self:GetBoard().Edges + 1 ] = edge
+	edge:SetBoard( self:GetBoard() )
+	edge:Spawn()
+	edge:Activate()
 	
 end

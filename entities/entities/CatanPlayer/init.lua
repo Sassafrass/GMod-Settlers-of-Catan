@@ -143,6 +143,53 @@ function ENT:BuildPiece( PType )
 	
 end
 
+function ENT:CanPlacePiece( PType, PosX, PosY )
+	
+	local socket
+	if( PType == PieceType.Village ) then
+		
+		socket = self:GetGame():GetBoard():GetVertexAt( PosX, PosY )
+		
+	elseif( PType == PieceType.Road ) then
+		
+		socket = self:GetGame():GetBoard():GetEdgeAt( PosX, PosY )
+		
+	end
+	
+	if( not socket ) then
+		
+		self:ChatPrint( "Invalid Socket Position" )
+		return
+		
+	end
+	
+	if( ValidEntity( socket:GetPiece() ) ) then
+		
+		self:ChatPrint( "There is already a piece there" )
+		return
+		
+	end
+	
+	if( PType == PieceType.Village ) then
+		
+		if( self:GetGame():ValidVillagePlacement( self, socket ) ) then
+			
+			return true
+			
+		end
+		
+	elseif( PType == PieceType.Road ) then
+		
+		if( self:GetGame():ValidRoadPlacement( self, socket ) ) then
+			
+			return true
+			
+		end
+		
+	end
+	
+end
+
 function ENT:PlacePiece( PosX, PosY )
 	
 	if( not self:HasBuiltPiece() ) then return end
@@ -168,7 +215,7 @@ function ENT:PlacePiece( PosX, PosY )
 	
 	self:SetBuiltPiece( nil )
 	
-	self:GetGame():OnPiecePlaced( self, PType, piece )
+	self:GetGame():OnPiecePlaced( self, piece )
 	
 end
 

@@ -8,9 +8,10 @@ function ENT:Initialize()
 	self:SetMoveType( MOVETYPE_NONE )
 end
 
-function ENT:SetPlayer( pl )
+function ENT:SetPlayer( CPl )
 	
-	self.dt.Player = pl
+	self.dt.Player = CPl
+	self:SetColor( CPl:GetCColor() )
 	
 end
 

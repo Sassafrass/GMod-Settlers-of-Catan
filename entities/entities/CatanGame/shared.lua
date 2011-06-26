@@ -78,3 +78,82 @@ function ENT:GetPlayerByID( id )
 	return self.Players[ id ]
 	
 end
+
+function ENT:ValidVillagePlacement( CPlayer, CVertex )
+	
+	for _, vert in pairs( CVertex:GetAdjacentVertexs() ) do
+		
+		if( ValidEntity( vert:GetPiece() ) and vert:GetPiece().PieceType == PieceType.Village ) then
+			
+			if( SERVER ) then
+				CPlayer:ChatPrint( "This village is too close to another village" )
+			end
+			return false
+			
+		end
+		
+	end
+	
+	if( self:GetState() == GAME_STATE.SETUP ) then
+		
+		for _, edge in pairs( CVertex:GetAdjacentEdges() ) do
+			
+			if( not ValidEntity( edge:GetPiece() ) ) then
+				
+				return true
+				
+			end
+			
+		end
+		
+		if( SERVER ) then
+			CPlayer:ChatPrint( "You cannot place a village here because there is no room for its road" )
+		end
+		return false
+		
+	elseif( self:GetState() > GAME_STATE.SETUP ) then
+		
+		for _, edge in pairs( CVertex:GetAdjacentEdges() ) do
+			
+			if( ValidEntity( edge:GetPiece() ) and edge:GetPiece():GetPlayer() == CPlayer ) then
+				
+				return true
+				
+			end
+			
+		end
+		
+		if( SERVER ) then
+			CPlayer:ChatPrint( "You must place your village on a road" )
+		end
+		return false
+		
+	end
+	
+	
+end
+
+function ENT:ValidRoadPlacement( CPlayer, CEdge )
+	
+	if( self:GetState() == GAME_STATE.SETUP ) then
+	
+		for _, vert in pairs( CEdge:GetAdjacentVertexs() ) do
+			
+			local piece = vert:GetPiece()
+			if( ValidEntity( piece ) and piece:GetPlayer() == CPlayer and piece == CPlayer.PreviousPlacedVillage ) then
+				
+				return true
+				
+			end
+			
+		end
+		
+		if( SERVER ) then
+			CPlayer:ChatPrint( "Your road must be placed adjacent to the village you just placed" )
+		end
+		
+		return false
+		
+	end
+	
+end

@@ -30,6 +30,13 @@ function ENT:PlacePiece( trPos )
 			RunConsoleCommand( "sog_placepiece", vert:GetX(), vert:GetY() )
 		end
 		
+	elseif( GAMEMODE.PlacingPiece == PieceType.Road ) then
+		
+		local edge = self:GetGame():GetBoard():GetEdgeAt( self:GetGame():GetBoard():WorldToEdge( trPos ) )
+		if( edge ) then
+			RunConsoleCommand( "sog_placepiece", edge:GetX(), edge:GetY() )
+		end
+		
 	end
 	
 end
