@@ -92,50 +92,50 @@ end
 	
 -- end )
 
-local Vector_Up = Vector( 0, 0, 15 )
-hook.Add( "PostDrawOpaqueRenderables", "CatanTile.PostDrawOpaqueRenderables", function()
+-- local Vector_Up = Vector( 0, 0, 15 )
+-- hook.Add( "PostDrawOpaqueRenderables", "CatanTile.PostDrawOpaqueRenderables", function()
 	
-	local CPl = LocalCPlayer()
-	if( not ValidEntity( CPl ) ) then return end
+	-- local CPl = LocalCPlayer()
+	-- if( not ValidEntity( CPl ) ) then return end
 	
-	local CGame = CPl:GetGame()
-	if( not ValidEntity( CGame ) ) then return end
+	-- local CGame = CPl:GetGame()
+	-- if( not ValidEntity( CGame ) ) then return end
 	
-	local board = CGame:GetBoard()
-	if( not ValidEntity( board ) ) then return end
+	-- local board = CGame:GetBoard()
+	-- if( not ValidEntity( board ) ) then return end
 	
-	local tr = GetPlayerTrace()
-	if( not tr ) then return end
-	surface.SetFont( "CV20" )
+	-- local tr = GetPlayerTrace()
+	-- if( not tr ) then return end
+	-- surface.SetFont( "CV20" )
 	
-	for _, ent in pairs( ents.FindByClass( "CatanTile" ) ) do
-		local ang = ( ent:GetPos() - GAMEMODE.View.origin ):Angle()
-		cam.Start3D2D( ent:GetPos() + Vector_Up, Angle( 0, ang.y-90, 90-ang.p ), 0.33 )
+	-- for _, ent in pairs( ents.FindByClass( "CatanTile" ) ) do
+		-- local ang = ( ent:GetPos() - GAMEMODE.View.origin ):Angle()
+		-- cam.Start3D2D( ent:GetPos() + Vector_Up, Angle( 0, ang.y-90, 90-ang.p ), 0.33 )
 			
-			local ok, err = pcall( ent.DebugDraw, ent, tr )
+			-- local ok, err = pcall( ent.DebugDraw, ent, tr )
 			
-		cam.End3D2D()
-	end
+		-- cam.End3D2D()
+	-- end
 	
-	for _, ent in pairs( ents.FindByClass( "CatanTileVertex" ) ) do
-		local ang = ( ent:GetPos() - GAMEMODE.View.origin ):Angle()
-		cam.Start3D2D( ent:GetPos() + Vector_Up, Angle( 0, ang.y-90, 90-ang.p ), 0.33 )
+	-- for _, ent in pairs( ents.FindByClass( "CatanTileVertex" ) ) do
+		-- local ang = ( ent:GetPos() - GAMEMODE.View.origin ):Angle()
+		-- cam.Start3D2D( ent:GetPos() + Vector_Up, Angle( 0, ang.y-90, 90-ang.p ), 0.33 )
 			
-			local ok, err = pcall( ent.DebugDraw, ent, tr )
+			-- local ok, err = pcall( ent.DebugDraw, ent, tr )
 			
-		cam.End3D2D()
-	end
+		-- cam.End3D2D()
+	-- end
 	
-	for _, ent in pairs( ents.FindByClass( "CatanTileEdge" ) ) do
-		local ang = ( ent:GetPos() - GAMEMODE.View.origin ):Angle()
-		cam.Start3D2D( ent:GetPos() + Vector_Up, Angle( 0, ang.y-90, 90-ang.p ), 0.33 )
+	-- for _, ent in pairs( ents.FindByClass( "CatanTileEdge" ) ) do
+		-- local ang = ( ent:GetPos() - GAMEMODE.View.origin ):Angle()
+		-- cam.Start3D2D( ent:GetPos() + Vector_Up, Angle( 0, ang.y-90, 90-ang.p ), 0.33 )
 			
-			local ok, err = pcall( ent.DebugDraw, ent, tr )
+			-- local ok, err = pcall( ent.DebugDraw, ent, tr )
 			
-		cam.End3D2D()
-	end
+		-- cam.End3D2D()
+	-- end
 	
-end )
+-- end )
 
 function ENT:DebugDraw( tr )
 	

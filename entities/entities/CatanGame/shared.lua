@@ -154,6 +154,25 @@ function ENT:ValidRoadPlacement( CPlayer, CEdge )
 		
 		return false
 		
+	else
+		
+		for _, edge in pairs( CEdge:GetAdjacentEdges() ) do
+			
+			local piece = edge:GetPiece()
+			if( ValidEntity( piece ) and piece:GetPlayer() == CPlayer ) then
+				
+				return true
+				
+			end
+			
+		end
+		
+		if( SERVER ) then
+			CPlayer:ChatPrint( "Your road must be built adjacent to another road" )
+		end
+		
+		return false
+		
 	end
 	
 end

@@ -98,7 +98,7 @@ function GM.TurnManager:NextPhase(TurnTotal, TurnPhase)
 			self.CGame:GatherPhase()
 		elseif(self.TurnPhase == TurnState.Gather) then
 			self.TurnPhase = TurnState.Trade
-			self.CGame:GatherPhase()
+			self.CGame:TradePhase()
 		elseif(self.TurnPhase == TurnState.Trade) then
 			self.TurnPhase = TurnState.Build
 			self.CGame:BuildPhase()
@@ -121,7 +121,7 @@ function GM.TurnManager:EndTurn()
 	else
 		if(self.InitilizationPhase == TurnPlacement.Forward) then
 			if(self.Turn == self.FirstTurn) then
-				self.Playing = true
+				self.CGame:SetState( GAME_STATE.STRIFE )
 				return
 			else
 				self.Turn = self.Turn + 1
