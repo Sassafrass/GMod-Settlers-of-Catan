@@ -117,6 +117,12 @@ function ENT:GetPlayer()
 	
 end
 
+function ENT:IsBot()
+	
+	return self:GetPlayer():IsBot()
+	
+end
+
 function ENT:GetGame()
 	
 	return self.dt.Game

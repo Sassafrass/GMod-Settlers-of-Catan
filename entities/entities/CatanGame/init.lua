@@ -106,28 +106,73 @@ function ENT:PlayerTurnStart( CPlayer )
 	
 	self.dt.ActivePlayer = CPlayer
 	
+	self:OnTurnStart( CPlayer )
+	
 	if( self:GetState() == GAME_STATE.SETUP ) then
 		
-		self:PlayerBuildPiece( CPlayer, PieceType.Village )
+		if(CPlayer:IsBot()) then
+			self:BotBuildPiece( CPlayer, PieceType.Village )
+		else
+			self:PlayerBuildPiece( CPlayer, PieceType.Village )
+		end
 		
 	end
 	
-	self:OnTurnStart( CPlayer )
+end
+
+function ENT:BotBuildPiece( CPl, PType )
+	
+
+	
+	self:OnBuildPiece( CPl, PType )
 	
 end
 
 function ENT:PlayerBuildPiece( CPl, PType )
-	
-	CPl:ChatPrint( "You built a piece" )
+
 	CPl:SetBuiltPiece( PType )
-	self:SetupPieceGhost( PType )
 	
-	umsg.Start( "sog_builtpiece", CPl:GetPlayer() )
-		umsg.Char( PType-128 )
-	umsg.End()
+	if(CPl:IsBot()) then
+		if(PType == PieceType.Village) then
+			local bestValue = 0
+			local bestVertex = false
+			
+			for k,v in self:GetBoard():GetVertexs() do
+				if(CPl:CanPlacePiece( PType, vertex:GetX(), vertex:GetY())) then
+					local value = 0
+					for k2,v2 in v:GetAdjacentTiles()
+						value = value + v2:GetTokenValue()
+					end
+					if(value > bestValue) then
+						bestValue = value
+						bestVertex = v
+					end
+				end
+			end
+			
+			CPl:PlacePiece(bestVertex:GetX(), bestVertex:GetY())
+			
+		elseif(PType == PieceType.Road) then
+			for k,v in self:GetBoard():GetEdges() do
+				if(CPl:CanPlacePiece( PType, v:GetX(), v:GetY())) then
+					CPl:PlacePiece(v:GetX(), v:GetY())
+					break
+				end
+			end
+		end
+	else
 	
-	self:OnBuildPiece( CPl, PType )
+		CPl:ChatPrint( "You built a piece" )
+		
+		self:SetupPieceGhost( PType )
+		
+		umsg.Start( "sog_builtpiece", CPl:GetPlayer() )
+			umsg.Char( PType-128 )
+		umsg.End()
+		
+		self:OnBuildPiece( CPl, PType )
 	
+	end
 end
 
 function ENT:OnBuildPiece( CPl, PType )
