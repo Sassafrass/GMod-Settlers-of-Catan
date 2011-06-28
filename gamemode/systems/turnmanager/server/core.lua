@@ -47,10 +47,14 @@ function GM.TurnManager:OnGameStarted()
 end
 
 function GM.TurnManager:OnDiceRolled(CPlayer, Result)
-	table.insert(self.InitialRolls, {ply = CPlayer, Roll = Result})
-	if(table.Count(self.InitialRolls) == self.PlayerCount) then
-		self:SetupOrder()
+	
+	if( self.CGame:GetState() == GAME_STATE.STARTED ) then
+		table.insert(self.InitialRolls, {ply = CPlayer, Roll = Result})
+		if(table.Count(self.InitialRolls) == self.PlayerCount) then
+			self:SetupOrder()
+		end
 	end
+	
 end
 
 function GM.TurnManager:GetActivePlayer()
@@ -86,10 +90,16 @@ function GM.TurnManager:StartTurn()
 	
 end
 
-function GM.TurnManager:NextPhase(TurnTotal, TurnPhase)
-	if(TurnTotal and TurnPhase and (self.TurnTotal != TurnTotal or self.TurnPhase != TurnPhase)) then -- Timer stuff
-		return
-	end
+function GM.TurnManager:GetPhase()
+	
+	return self.TurnPhase
+	
+end
+
+function GM.TurnManager:NextPhase()
+	-- if(TurnTotal and TurnPhase and (self.TurnTotal != TurnTotal or self.TurnPhase != TurnPhase)) then -- Timer stuff
+		-- return
+	-- end
 	if(self.TurnPhase == TurnState.Build) then
 		self:FinishTurn()
 	else
@@ -99,11 +109,12 @@ function GM.TurnManager:NextPhase(TurnTotal, TurnPhase)
 		elseif(self.TurnPhase == TurnState.Gather) then
 			self.TurnPhase = TurnState.Trade
 			self.CGame:TradePhase()
+			timer.Simple(10, self.NextPhase, self)
 		elseif(self.TurnPhase == TurnState.Trade) then
 			self.TurnPhase = TurnState.Build
 			self.CGame:BuildPhase()
+			timer.Simple(5, self.NextPhase, self)
 		end
-		timer.Simple(5, self.NextPhase, self, self.TurnTotal, self.TurnPhase)
 	end
 end
 
