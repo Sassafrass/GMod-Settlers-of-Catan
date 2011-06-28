@@ -91,6 +91,10 @@ elseif( CLIENT ) then
 	include("GUI/core.lua")
 	include("GUI/nametags.lua")
 	include("GUI/chatbox.lua")
+	include("GUI/tutorialscreen.lua")
+	include("GUI/mainscreen.lua")
+	include("GUI/playscreen.lua")
+	include("GUI/screenmanager.lua")
 	include( "enums.lua" )
 
 	print( "# Done loading shared files     #" )
