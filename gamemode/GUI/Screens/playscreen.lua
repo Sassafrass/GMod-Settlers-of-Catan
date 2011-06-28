@@ -15,7 +15,7 @@ function PANEL:Init()
 	self.JoinGameBtn:SetText( "Join" )
 	self.JoinGameBtn.DoClick = function()
 		
-		self.ScreenManager:SetScreen( "LobbyScreen" )
+		self.ScreenManager:SetScreen( "JoinScreen" )
 		
 	end
 	
@@ -24,6 +24,14 @@ function PANEL:Init()
 	self.CreateGameBtn.DoClick = function()
 		
 		self.ScreenManager:SetScreen( "CreateScreen" )
+		
+	end
+	
+	self.StatsBtn = vgui.Create( "Button", self )
+	self.StatsBtn:SetText( "Statistics" )
+	self.StatsBtn.DoClick = function()
+		
+		self.ScreenManager:SetScreen( "StatsScreen" )
 		
 	end
 	
@@ -48,11 +56,14 @@ function PANEL:PerformLayout()
 	self.GoBackBtn:SetSize( self:GetWide() * 0.1, self:GetTall() * 0.8 )
 	self.GoBackBtn:SetPos( self:GetWide() * 0.1, self:GetTall() * 0.1 )
 	
-	self.JoinGameBtn:SetSize( self:GetWide() * 0.7, self:GetTall() * 0.4 )
+	self.JoinGameBtn:SetSize( self:GetWide() * 0.35, self:GetTall() * 0.4 )
 	self.JoinGameBtn:SetPos( self:GetWide() * 0.2, self:GetTall() * 0.1 )
 	
-	self.CreateGameBtn:SetSize( self:GetWide() * 0.7, self:GetTall() * 0.4 )
-	self.CreateGameBtn:SetPos( self:GetWide() * 0.2, self:GetTall() * 0.5 )
+	self.CreateGameBtn:SetSize( self:GetWide() * 0.35, self:GetTall() * 0.4 )
+	self.CreateGameBtn:SetPos( self:GetWide() * 0.55, self:GetTall() * 0.3 )
+	
+	self.StatsBtn:SetSize( self:GetWide() * 0.35, self:GetTall() * 0.4 )
+	self.StatsBtn:SetPos( self:GetWide() * 0.2, self:GetTall() * 0.5 )
 	
 end
 

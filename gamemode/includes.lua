@@ -58,6 +58,7 @@ if( SERVER ) then
 	AddCSLuaFolder( "Systems/Lobby/client" )
 	AddCSLuaFolder( "Systems/Lobby/shared" )
 	AddCSLuaFolder( "GUI" )
+	AddCSLuaFolder( "GUI/Screens" )
 	AddCSLuaFile( "utilities.lua" )
 	AddCSLuaFile( "enums.lua" )
 
@@ -91,9 +92,7 @@ elseif( CLIENT ) then
 	include("GUI/core.lua")
 	include("GUI/nametags.lua")
 	include("GUI/chatbox.lua")
-	include("GUI/tutorialscreen.lua")
-	include("GUI/mainscreen.lua")
-	include("GUI/playscreen.lua")
+	includeFolder( "GUI/Screens" )
 	include("GUI/screenmanager.lua")
 	include( "enums.lua" )
 

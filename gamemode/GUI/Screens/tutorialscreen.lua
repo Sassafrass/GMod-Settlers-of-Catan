@@ -3,11 +3,11 @@ local PANEL = {}
 
 function PANEL:Init()
 	
-	self.PlayNowBtn = vgui.Create( "Button", self )
-	self.PlayNowBtn:SetText( "Play Now" )
-	self.PlayNowBtn.DoClick = function()
+	self.ReturnBtn = vgui.Create( "Button", self )
+	self.ReturnBtn:SetText( "Back to Menu" )
+	self.ReturnBtn.DoClick = function()
 		
-		self.ScreenManager:SetScreen( "PlayScreen" )
+		self.ScreenManager:SetScreen( "MainScreen" )
 		
 	end
 	
@@ -39,12 +39,6 @@ end
 
 function PANEL:OnHidden()
 	
-	-- if( ValidPanel( self.TutorialPanel ) ) then	
-		
-		-- self.TutorialPanel:Remove()
-		
-	-- end
-	
 	self:SetVisible( false )
 	
 end
@@ -53,8 +47,8 @@ function PANEL:PerformLayout()
 	
 	self:SetSize( ScrW(), ScrH() )
 	
-	self.PlayNowBtn:SetSize( self:GetWide() * 0.1, 768 )
-	self.PlayNowBtn:SetPos( self:GetWide() * 0.5 + 512, self:GetTall() * 0.5 - 384 )
+	self.ReturnBtn:SetSize( 950, self:GetTall() * 0.1 )
+	self.ReturnBtn:SetPos( self:GetWide() * 0.5 - 475, self:GetTall() * 0.55 + 300 )
 	
 end
 

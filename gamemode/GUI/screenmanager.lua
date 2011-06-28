@@ -4,9 +4,13 @@ function PANEL:Init()
 	
 	self.Screens = {}
 	self.ScreenID = 0
-	self:AddScreen( "TutorialScreen", 0, 1 )
+	self:AddScreen( "TutorialScreen", 1, 0 )
+	self:AddScreen( "CustomizeScreen", 1, 2 )
 	self:AddScreen( "MainScreen", 1, 1 )
 	self:AddScreen( "PlayScreen", 2, 1 )
+	self:AddScreen( "JoinScreen", 2, 0 )
+	self:AddScreen( "CreateScreen", 3, 1 )
+	self:AddScreen( "StatsScreen", 2, 2 )
 	
 	self:SetScreen( "MainScreen", true )
 	
@@ -16,7 +20,7 @@ end
 
 function PANEL:PerformLayout()
 	
-	self:SetSize( ScrW() * 3, ScrH() * 3 )
+	self:SetSize( ScrW() * 4, ScrH() * 3 )
 	
 	for i = 1, #self.Screens do
 		
@@ -30,11 +34,13 @@ end
 function PANEL:AddScreen( ScreenName, scrX, scrY )
 	
 	local screen = vgui.Create( ScreenName, self )
-	screen.ScreenManager = self
-	screen.name = ScreenName
-	screen.scrX = scrX
-	screen.scrY = scrY
-	self.Screens[ #self.Screens + 1 ] = screen
+	if( screen ) then
+		screen.ScreenManager = self
+		screen.name = ScreenName
+		screen.scrX = scrX
+		screen.scrY = scrY
+		self.Screens[ #self.Screens + 1 ] = screen
+	end
 	
 end
 
