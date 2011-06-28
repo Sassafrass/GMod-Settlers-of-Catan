@@ -2,6 +2,9 @@ local PANEL = {}
 
 function PANEL:Init()
 	
+	self:SetKeyboardInputEnabled( true )
+	self:SetMouseInputEnabled( true )
+	
 	self.Screens = {}
 	self.ScreenID = 0
 	self:AddScreen( "TutorialScreen", 1, 0 )
@@ -84,4 +87,9 @@ function PANEL:Think()
 	
 end
 
+if( ValidPanel( ScreenManager ) ) then
+	ErrorNoHalt( "Removing ScreenManager\n" )
+	ScreenManager:Remove()
+end
 ScreenManager = vgui.CreateFromTable( vgui.RegisterTable( PANEL, "Panel" ) )
+ScreenManager:MakePopup()
