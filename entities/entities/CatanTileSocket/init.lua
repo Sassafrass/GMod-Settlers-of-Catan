@@ -11,6 +11,9 @@ end
 
 function ENT:SetPiece( piece )
 	self.dt.Piece = piece
+	piece:SetPos( self:GetPos() )
+	piece:SetAngles( self:GetAngles() )
+	piece:SetSocket( self )
 end
 
 function ENT:SetX( x )

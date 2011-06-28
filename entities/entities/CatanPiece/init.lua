@@ -15,6 +15,12 @@ function ENT:SetPlayer( CPl )
 	
 end
 
+function ENT:SetSocket( socket )
+	
+	self.dt.Socket = socket
+	
+end
+
 function ENT:SetBoard( board )
 	
 	self.dt.Board = board

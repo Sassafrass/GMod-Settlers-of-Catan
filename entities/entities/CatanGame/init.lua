@@ -36,10 +36,9 @@ function ENT:SetGameID( id )
 	
 end
 
-function ENT:OnDiceRolled( CPlayer, result )
+function ENT:GetPhase()
 	
-	self:ChatBroadcast( CPlayer:GetName() .. " has rolled a " .. result )
-	self.TurnManager:OnDiceRolled( CPlayer, result )
+	return self.TurnManager:GetPhase()
 	
 end
 
@@ -98,6 +97,52 @@ end
 
 -----------------------------------------------------------------------------
 
+function ENT:OnDiceRolled( CPlayer, result )
+	
+	self:ChatBroadcast( CPlayer:GetName() .. " has rolled a " .. result )
+	self.TurnManager:OnDiceRolled( CPlayer, result )
+	
+	if( self:GetPhase() == TurnState.Gather ) then
+		
+		if( result == 7 ) then
+			
+			--TODO: Move the robber
+			self.TurnManager:NextPhase() --TODO: Call this once the robber is moved and the player steals a card
+			
+		else
+			
+			self:GiveResourcesForRoll( result )
+			self.TurnManager:NextPhase()
+			
+		end
+		
+	end
+	
+end
+
+function ENT:GiveResourcesForRoll( value )
+	
+	for _, vert in pairs( self:GetBoard():GetVertexs() ) do
+		
+		local piece = vert:GetPiece()
+		if( ValidEntity( piece ) ) then
+			
+			for _, tile in pairs( vert:GetAdjacentTiles() ) do
+				
+				if( not tile:HasRobber() and tile:GetTokenValue() == value ) then
+					
+					piece:GetPlayer():AddResource( tile:GetTerrain() )
+					
+				end
+				
+			end
+			
+		end
+		
+	end
+	
+end
+
 function ENT:GetActivePlayer()
 	return self.TurnManager:GetActivePlayer()
 end
@@ -110,19 +155,13 @@ function ENT:PlayerTurnStart( CPlayer )
 	
 	if( self:GetState() == GAME_STATE.SETUP ) then
 		
-		if(CPlayer:IsBot()) then
-			self:BotBuildPiece( CPlayer, PieceType.Village )
-		else
-			self:PlayerBuildPiece( CPlayer, PieceType.Village )
-		end
+		self:PlayerBuildPiece( CPlayer, PieceType.Village )
 		
 	end
 	
 end
 
 function ENT:BotBuildPiece( CPl, PType )
-	
-
 	
 	self:OnBuildPiece( CPl, PType )
 	
@@ -132,50 +171,53 @@ function ENT:PlayerBuildPiece( CPl, PType )
 
 	CPl:SetBuiltPiece( PType )
 	
-	if(CPl:IsBot()) then
-		if(PType == PieceType.Village) then
-			local bestValue = 0
-			local bestVertex = false
-			
-			for k,v in self:GetBoard():GetVertexs() do
-				if(CPl:CanPlacePiece( PType, vertex:GetX(), vertex:GetY())) then
-					local value = 0
-					for k2,v2 in v:GetAdjacentTiles()
-						value = value + v2:GetTokenValue()
-					end
-					if(value > bestValue) then
-						bestValue = value
-						bestVertex = v
-					end
-				end
-			end
-			
-			CPl:PlacePiece(bestVertex:GetX(), bestVertex:GetY())
-			
-		elseif(PType == PieceType.Road) then
-			for k,v in self:GetBoard():GetEdges() do
-				if(CPl:CanPlacePiece( PType, v:GetX(), v:GetY())) then
-					CPl:PlacePiece(v:GetX(), v:GetY())
-					break
-				end
-			end
-		end
-	else
+	CPl:ChatPrint( "You built a piece" )
 	
-		CPl:ChatPrint( "You built a piece" )
-		
-		self:SetupPieceGhost( PType )
-		
-		umsg.Start( "sog_builtpiece", CPl:GetPlayer() )
-			umsg.Char( PType-128 )
-		umsg.End()
-		
-		self:OnBuildPiece( CPl, PType )
+	self:SetupPieceGhost( PType )
 	
-	end
+	umsg.Start( "sog_builtpiece", CPl:GetPlayer() )
+		umsg.Char( PType-128 )
+	umsg.End()
+	
+	self:OnBuildPiece( CPl, PType )
+	
 end
 
 function ENT:OnBuildPiece( CPl, PType )
+
+	if( CPl:IsBot() ) then
+		if(PType == PieceType.Village) then
+			
+			local bestValue = 0
+			local bestVertex = false
+			
+			for _, vert in pairs( self:GetBoard():GetVertexs() ) do
+				if( CPl:CanPlacePiece( PType, vert:GetX(), vert:GetY() ) ) then
+					local value = 0
+					for _, tile in pairs( vert:GetAdjacentTiles() ) do
+						value = value + tile:GetTokenValue()
+					end
+					if(value > bestValue) then
+						bestValue = value
+						bestVertex = vert
+					end
+				end
+			end
+			
+			CPl:PlacePiece( bestVertex:GetX(), bestVertex:GetY() )
+			
+		elseif(PType == PieceType.Road) then
+			
+			for _, edge in rpairs( CPl.PreviousPlacedVillage:GetSocket():GetAdjacentEdges() ) do
+				if( CPl:CanPlacePiece( PType, edge:GetX(), edge:GetY() ) ) then
+					CPl:PlacePiece( edge:GetX(), edge:GetY() )
+					break
+				end
+			end
+			
+		end
+	end
+	
 end
 
 function ENT:SetupPieceGhost( PType )
@@ -233,12 +275,11 @@ function ENT:OnPiecePlaced( CPlayer, Piece )
 		
 		if( Piece.PieceType == PieceType.Village ) then
 			
-			self:PlayerBuildPiece( CPlayer, PieceType.Road )
 			CPlayer.PreviousPlacedVillage = Piece --Make sure the road is placed adjacent to this village
+			self:PlayerBuildPiece( CPlayer, PieceType.Road )
 			
 		elseif( Piece.PieceType == PieceType.Road ) then
 			
-			CPlayer.PreviousPlaceVillage = nil
 			self.TurnManager:FinishTurn()
 			
 		end
@@ -257,6 +298,7 @@ end
 
 function ENT:GatherPhase(NextPhase)
 	self:ChatBroadcast("GatherPhase")
+	self:GetActivePlayer():RollDie()
 end
 
 function ENT:TradePhase(NextPhase)

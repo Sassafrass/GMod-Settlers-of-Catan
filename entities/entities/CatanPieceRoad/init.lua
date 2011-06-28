@@ -10,7 +10,3 @@ function ENT:Initialize()
 	self:SetModel( "models/mrgiggles/sog/road.mdl" )
 	
 end
-
-function ENT:SetEdge(edge)
-	self.dt.Edge = edge
-end

@@ -11,10 +11,6 @@ function ENT:Initialize()
 	
 end
 
-function ENT:SetCorner(corner)
-	self.dt.Corner = corner
-end
-
 function ENT:Upgrade()
 	local city = ents.Create("CatanPieceCity")
 	

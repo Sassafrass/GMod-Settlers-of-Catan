@@ -119,7 +119,11 @@ end
 
 function ENT:IsBot()
 	
-	return self:GetPlayer():IsBot()
+	if( not ValidEntity( self:GetPlayer() ) ) then
+		return true
+	else
+		return self:GetPlayer():IsBot()
+	end
 	
 end
 

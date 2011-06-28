@@ -27,11 +27,3 @@ end
 function ENT:GetY()
 	return self.dt.Y
 end
-
-function ENT:GetAdjacentTiles()
-	return self.AdjacentTiles
-end
-
-function ENT:GetConnectedEdges()
-	return self.ConnectedEdges
-end

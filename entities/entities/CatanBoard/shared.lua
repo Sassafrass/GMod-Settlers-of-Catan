@@ -8,25 +8,7 @@ CTILE_NARROW_WIDTH = CTILE_HEIGHT / math.cos( math.rad( 30 ) )
 CTILE_SIZE = CTILE_NARROW_WIDTH * 0.5
 CTILE_SEGMENT = CTILE_SIZE * math.sin( math.rad( 30 ) )
 CTILE_WIDTH = (3*CTILE_HALF_HEIGHT) / (2*math.sin( math.rad( 60 ) ))
-	
 
-function TerrainName( terrainType )
-	
-	if( terrainType == Terrain.Desert ) then
-		return "Desert"
-	elseif( terrainType == Terrain.Hills ) then
-		return "Hills"
-	elseif( terrainType == Terrain.Pasture ) then
-		return "Pasture"
-	elseif( terrainType == Terrain.Mountains ) then
-		return "Mountains"
-	elseif( terrainType == Terrain.Fields ) then
-		return "Fields"
-	elseif( terrainType == Terrain.Forest ) then
-		return "Forest"
-	end
-	
-end
 
 function ENT:SharedInitialize()
 
@@ -52,7 +34,7 @@ function ENT:GetTiles()
 	
 end
 
-function ENT:GetVerts()
+function ENT:GetVertexs()
 	
 	return self.Vertexs
 	

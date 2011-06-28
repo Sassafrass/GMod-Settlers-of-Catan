@@ -1,30 +1,14 @@
 
 GM.CardManager = {}
 
-ENUM( "CardType",
-	  "Sheep",
-	  "Wheat",
-	  "Iron",
-	  "Lumber",
-	  "Brick",
-	  "Development"
-	)
-	  
-  ENUM(	  "DevelopmentCard",
-		  "Quarry",
-		  "Toolmaking",
-		  "GlassMaking",
-		  "RoadBuilding",
-		  "SwiftJourney",
-		  "Knight"
-	)
-
 function GM.CardManager:SetupCardManager(CGame)
-    local Cards = {}
-    setmetaCards(Cards, self)
-    self.__index = self
-    Cards.CGame = CGame
-    return Cards
+	
+	local Cards = {}
+	setmetaCards(Cards, self)
+	self.__index = self
+	Cards.CGame = CGame
+	return Cards
+	
 end
 
 function GM.CardManager:GiveCardsForRoll(terrian)

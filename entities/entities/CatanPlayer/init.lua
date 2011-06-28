@@ -128,12 +128,17 @@ function ENT:RollDie()
 	
 	self:ChatPrint( "You rolled the dice" )
 	timer.Simple( 4, function()
-		if( self:GetPlayer():IsBot() ) then
-			self:GetGame():OnDiceRolled( self, 2 )
-		else
-			self:GetGame():OnDiceRolled( self, math.random( 2, 12 ) )
-		end
+		self:GetGame():OnDiceRolled( self, math.random( 2, 12 ) )
 	end )
+	
+end
+
+function ENT:AddResource( TType )
+	
+	local res = terrainToResource( TType )
+	if( res ) then
+		self:ChatPrint( "You earned a " .. ResourceName( res ) .. " resource card." )
+	end
 	
 end
 
@@ -201,15 +206,11 @@ function ENT:PlacePiece( PosX, PosY )
 		
 		local vert = self:GetGame():GetBoard():GetVertexAt( PosX, PosY )
 		vert:SetPiece( piece )
-		piece:SetPos( vert:GetPos() )
-		piece:SetAngles( vert:GetAngles() )
 		
 	elseif( PType == PieceType.Road ) then
 		
 		local edge = self:GetGame():GetBoard():GetEdgeAt( PosX, PosY )
 		edge:SetPiece( piece )
-		piece:SetPos( edge:GetPos() )
-		piece:SetAngles( edge:GetAngles() )
 		
 	end
 	

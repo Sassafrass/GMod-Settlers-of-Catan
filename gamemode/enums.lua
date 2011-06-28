@@ -34,6 +34,24 @@ PLAYER_COLORS = {
 	[PlayerColor.Brown] = Color( 139, 69, 19 )
 }
 
+function TerrainName( terrainType )
+	
+	if( terrainType == Terrain.Desert ) then
+		return "Desert"
+	elseif( terrainType == Terrain.Hills ) then
+		return "Hills"
+	elseif( terrainType == Terrain.Pasture ) then
+		return "Pasture"
+	elseif( terrainType == Terrain.Mountains ) then
+		return "Mountains"
+	elseif( terrainType == Terrain.Fields ) then
+		return "Fields"
+	elseif( terrainType == Terrain.Forest ) then
+		return "Forest"
+	end
+	
+end
+
 ENUM( "Terrain",
 	"Hills",
 	"Pasture",
@@ -48,6 +66,56 @@ ENUM( "Terrain",
 	"WaterWheat",
 	"WaterWood",
 	"WaterIron"
+	)
+
+function terrainToResource( terrainType )
+	
+	if( terrainType < 6 ) then
+		return terrainType
+	else
+		return
+	end
+	
+end
+
+function ResourceName( resourceType )
+	
+	if( resourceType == Resource.Brick ) then
+		return "Brick"
+	elseif( resourceType == Resource.Wool ) then
+		return "Wool"
+	elseif( resourceType == Resource.Ore ) then
+		return "Ore"
+	elseif( resourceType == Resource.Grain ) then
+		return "Grain"
+	elseif( resourceType == Resource.Lumber ) then
+		return "Lumber"
+	end
+	
+end
+
+ENUM( "Resource",
+	"Brick",
+	"Wool",
+	"Ore",
+	"Grain",
+	"Lumber"
+	)
+
+ENUM( "CardType",
+	"LongestRoad",
+	"LargestArmy",
+	"Resource",
+	"Development"
+	)
+
+ENUM( "DevelopmentCard",
+	"Quarry",
+	"ToolMaking",
+	"GlassMaking",
+	"RoadBuilding",
+	"SwiftJourney",
+	"Knight"
 	)
 
 ENUM( "GAME_STATE",
