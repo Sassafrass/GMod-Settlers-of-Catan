@@ -27,17 +27,20 @@ end
 
 function PANEL:PerformLayout()
 	
-	self:SetSize( ScrW(), ScrH() )
+	local w, h = ScrW(), ScrH()
 	
-	self.ReturnBtn:SetSize( self:GetWide() * 0.8, self:GetTall() * 0.1 )
-	self.ReturnBtn:SetPos( self:GetWide() * 0.1, self:GetTall() * 0.1 )
+	self.ReturnBtn:SetSize( w * 0.8, h * 0.1 )
+	self.ReturnBtn:SetPos( w * 0.1, h * 0.1 )
 	
 end
 
+PANEL.BackgroundTex = surface.GetTextureID( "sog/gui/hexes/tile_hills" )
+
 function PANEL:Paint()
 	
-	surface.SetDrawColor( 255, 255, 0, 100 )
-	surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
+	surface.SetTexture( self.BackgroundTex )
+    surface.SetDrawColor( 0, 255, 0, 255 )
+    surface.DrawPoly( self.HexPoly )
 	
 end
 vgui.Register( "StatsScreen", PANEL, "Panel" )

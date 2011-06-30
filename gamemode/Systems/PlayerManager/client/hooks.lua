@@ -25,6 +25,12 @@ function GM:CalcView( pl, pos, angles, fov )
 	self.ViewAngle.y = self.ViewAngle.y + self.RotationDelta
 	self.RotationDelta = self.RotationDelta * 0.8
 	
+	if( ValidPanel( ScreenManager ) ) then
+		
+		ScreenManager:CalcView()
+		
+	end
+	
 	local view = self.View
 		view.origin = self.ViewOrigin + Vector( math.cos( math.Deg2Rad( self.ViewAngle.y ) ) * -self.ViewDistance,
 												math.sin( math.Deg2Rad( self.ViewAngle.y ) ) * -self.ViewDistance,

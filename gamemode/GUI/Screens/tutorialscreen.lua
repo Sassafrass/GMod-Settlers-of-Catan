@@ -11,8 +11,6 @@ function PANEL:Init()
 		
 	end
 	
-	self:SetVisible( false )
-	
 end
 
 function PANEL:OnSelected()
@@ -45,17 +43,19 @@ end
 
 function PANEL:PerformLayout()
 	
-	self:SetSize( ScrW(), ScrH() )
-	
-	self.ReturnBtn:SetSize( 950, self:GetTall() * 0.1 )
-	self.ReturnBtn:SetPos( self:GetWide() * 0.5 - 475, self:GetTall() * 0.55 + 300 )
+	local w, h = ScrW(), ScrH()
+	self.ReturnBtn:SetSize( 950, h * 0.1 )
+	self.ReturnBtn:SetPos( w * 0.5 - 475, h * 0.55 + 300 )
 	
 end
 
+PANEL.BackgroundTex = surface.GetTextureID( "sog/gui/hexes/tile_pasture" )
+
 function PANEL:Paint()
 	
-	surface.SetDrawColor( 0, 255, 0, 100 )
-	surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
+	surface.SetTexture( self.BackgroundTex )
+    surface.SetDrawColor( 255, 0, 0, 255 )
+    surface.DrawPoly( self.HexPoly )
 	
 end
 vgui.Register( "TutorialScreen", PANEL, "Panel" )

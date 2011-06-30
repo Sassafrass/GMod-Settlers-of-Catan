@@ -51,26 +51,28 @@ end
 
 function PANEL:PerformLayout()
 	
-	self:SetSize( ScrW(), ScrH() )
+	local w, h = ScrW(), ScrH()
+	self.GoBackBtn:SetSize( w * 0.1, h * 0.8 )
+	self.GoBackBtn:SetPos( w * 0.1, h * 0.1 )
 	
-	self.GoBackBtn:SetSize( self:GetWide() * 0.1, self:GetTall() * 0.8 )
-	self.GoBackBtn:SetPos( self:GetWide() * 0.1, self:GetTall() * 0.1 )
+	self.JoinGameBtn:SetSize( w * 0.35, h * 0.4 )
+	self.JoinGameBtn:SetPos( w * 0.2, h * 0.1 )
 	
-	self.JoinGameBtn:SetSize( self:GetWide() * 0.35, self:GetTall() * 0.4 )
-	self.JoinGameBtn:SetPos( self:GetWide() * 0.2, self:GetTall() * 0.1 )
+	self.CreateGameBtn:SetSize( w * 0.35, h * 0.4 )
+	self.CreateGameBtn:SetPos( w * 0.55, h * 0.3 )
 	
-	self.CreateGameBtn:SetSize( self:GetWide() * 0.35, self:GetTall() * 0.4 )
-	self.CreateGameBtn:SetPos( self:GetWide() * 0.55, self:GetTall() * 0.3 )
-	
-	self.StatsBtn:SetSize( self:GetWide() * 0.35, self:GetTall() * 0.4 )
-	self.StatsBtn:SetPos( self:GetWide() * 0.2, self:GetTall() * 0.5 )
+	self.StatsBtn:SetSize( w * 0.35, h * 0.4 )
+	self.StatsBtn:SetPos( w * 0.2, h * 0.5 )
 	
 end
 
+PANEL.BackgroundTex = surface.GetTextureID( "sog/gui/hexes/tile_forest" )
+
 function PANEL:Paint()
 	
-	surface.SetDrawColor( 255, 0, 255, 100 )
-	surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
+	surface.SetTexture( self.BackgroundTex )
+    surface.SetDrawColor( 255, 0, 255, 255 )
+    surface.DrawPoly( self.HexPoly )
 	
 end
 vgui.Register( "PlayScreen", PANEL, "Panel" )
